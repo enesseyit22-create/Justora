@@ -36,32 +36,92 @@ export type CardDef = {
 };
 
 export const CARDS: CardDef[] = [
-  { id: 'dawnWedge', rarity: 'common', colors: ['#F6C4AE', '#F0A88A', '#F6F1EA'], motif: 'wedge', nameKey: 'cardDawnWedge', bodyKey: 'cardDawnWedgeBody' },
-  { id: 'softRain', rarity: 'common', colors: ['#C9D8E6', '#8FB3C9', '#F3F7F6'], motif: 'rain', nameKey: 'cardSoftRain', bodyKey: 'cardSoftRainBody' },
-  { id: 'focusPebble', rarity: 'common', colors: ['#D9D0C4', '#A89888', '#F6F1EA'], motif: 'shell', nameKey: 'cardFocusPebble', bodyKey: 'cardFocusPebbleBody' },
-  { id: 'openPage', rarity: 'common', colors: ['#F4E6C8', '#E7C98A', '#FFF8F0'], motif: 'wedge', nameKey: 'cardOpenPage', bodyKey: 'cardOpenPageBody' },
-  { id: 'sageLeaf', rarity: 'common', colors: ['#C9DCC0', '#8FAF86', '#F4F6F1'], motif: 'leaf', nameKey: 'cardSageLeaf', bodyKey: 'cardSageLeafBody' },
-  { id: 'quietLamp', rarity: 'common', colors: ['#F0D9B8', '#E0B07A', '#FFF6EA'], motif: 'star', nameKey: 'cardQuietLamp', bodyKey: 'cardQuietLampBody' },
-  { id: 'justSpark', rarity: 'rare', colors: ['#F6C4AE', '#E7A08A', '#FFE8DC'], motif: 'flame', nameKey: 'cardJustSpark', bodyKey: 'cardJustSparkBody' },
-  { id: 'tideShell', rarity: 'rare', colors: ['#B7DDD6', '#7EB8B0', '#F3F7F6'], motif: 'shell', nameKey: 'cardTideShell', bodyKey: 'cardTideShellBody' },
-  { id: 'groveMoss', rarity: 'rare', colors: ['#C9DCC0', '#6E8F62', '#E6EEE3'], motif: 'leaf', nameKey: 'cardGroveMoss', bodyKey: 'cardGroveMossBody' },
-  { id: 'duskRibbon', rarity: 'rare', colors: ['#D9CBEA', '#B7A4D6', '#F6F3F8'], motif: 'orbit', nameKey: 'cardDuskRibbon', bodyKey: 'cardDuskRibbonBody' },
-  { id: 'inkDot', rarity: 'epic', colors: ['#2C2825', '#E7A08A', '#F7F6F3'], motif: 'star', nameKey: 'cardInkDot', bodyKey: 'cardInkDotBody' },
-  { id: 'weekBloom', rarity: 'epic', colors: ['#F0A88A', '#8FAF86', '#FFF1E8'], motif: 'leaf', nameKey: 'cardWeekBloom', bodyKey: 'cardWeekBloomBody' },
-  { id: 'streakFlame', rarity: 'epic', colors: ['#E7A08A', '#C96B4A', '#FFF1E8'], motif: 'flame', nameKey: 'cardStreakFlame', bodyKey: 'cardStreakFlameBody' },
-  { id: 'companionBloom', rarity: 'epic', colors: ['#F6C4AE', '#6E8F78', '#F6F1EA'], motif: 'companion', nameKey: 'cardCompanionBloom', bodyKey: 'cardCompanionBloomBody' },
-  { id: 'goldenWedge', rarity: 'legendary', colors: ['#F0D27A', '#E7A08A', '#FFF6E0'], motif: 'wedge', nameKey: 'cardGoldenWedge', bodyKey: 'cardGoldenWedgeBody' },
-  { id: 'nightOrbit', rarity: 'legendary', colors: ['#1C1714', '#B7A4D6', '#3A302B'], motif: 'orbit', nameKey: 'cardNightOrbit', bodyKey: 'cardNightOrbitBody' },
-  { id: 'proAurora', rarity: 'epic', proOnly: true, colors: ['#8FCFC6', '#B7A4D6', '#F3F7F6'], motif: 'orbit', nameKey: 'cardProAurora', bodyKey: 'cardProAuroraBody' },
-  { id: 'proConstellation', rarity: 'legendary', proOnly: true, colors: ['#17141C', '#CDBFE6', '#8FCFC6'], motif: 'star', nameKey: 'cardProConstellation', bodyKey: 'cardProConstellationBody' },
-  { id: 'proGilded', rarity: 'legendary', proOnly: true, colors: ['#C9A44A', '#F0D27A', '#2C2825'], motif: 'wedge', nameKey: 'cardProGilded', bodyKey: 'cardProGildedBody' },
-  { id: 'proMoonwell', rarity: 'epic', proOnly: true, colors: ['#7EB8B0', '#D9CBEA', '#121918'], motif: 'shell', nameKey: 'cardProMoonwell', bodyKey: 'cardProMoonwellBody' },
+  { id: 'dawnWedge', rarity: 'common', colors: ['#F8D7B0', '#F0A88A', '#FFF6EC'], motif: 'companion', nameKey: 'cardDawnWedge', bodyKey: 'cardDawnWedgeBody' },
+  { id: 'softRain', rarity: 'common', colors: ['#D5E4F2', '#9EC4DE', '#F4F8FB'], motif: 'companion', nameKey: 'cardSoftRain', bodyKey: 'cardSoftRainBody' },
+  { id: 'focusPebble', rarity: 'common', colors: ['#E7D3C0', '#C4A484', '#FBF6F1'], motif: 'companion', nameKey: 'cardFocusPebble', bodyKey: 'cardFocusPebbleBody' },
+  { id: 'openPage', rarity: 'common', colors: ['#F3E6C8', '#E7C98A', '#FFF9F0'], motif: 'companion', nameKey: 'cardOpenPage', bodyKey: 'cardOpenPageBody' },
+  { id: 'sageLeaf', rarity: 'common', colors: ['#D5E6C8', '#8FAF86', '#F4F7F1'], motif: 'companion', nameKey: 'cardSageLeaf', bodyKey: 'cardSageLeafBody' },
+  { id: 'quietLamp', rarity: 'common', colors: ['#F6E2C4', '#E0B07A', '#FFF8EE'], motif: 'companion', nameKey: 'cardQuietLamp', bodyKey: 'cardQuietLampBody' },
+  { id: 'justSpark', rarity: 'rare', colors: ['#F8CDB8', '#F0A88A', '#FFF1E8'], motif: 'companion', nameKey: 'cardJustSpark', bodyKey: 'cardJustSparkBody' },
+  { id: 'tideShell', rarity: 'rare', colors: ['#C9E4DE', '#7EB8B0', '#F3F8F7'], motif: 'companion', nameKey: 'cardTideShell', bodyKey: 'cardTideShellBody' },
+  { id: 'groveMoss', rarity: 'rare', colors: ['#D5E0C4', '#6E8F62', '#F3F6EF'], motif: 'companion', nameKey: 'cardGroveMoss', bodyKey: 'cardGroveMossBody' },
+  { id: 'duskRibbon', rarity: 'rare', colors: ['#F0D4E4', '#D7A8C4', '#FBF4F8'], motif: 'companion', nameKey: 'cardDuskRibbon', bodyKey: 'cardDuskRibbonBody' },
+  { id: 'inkDot', rarity: 'epic', colors: ['#E7D5C8', '#C4A898', '#F7F1EA'], motif: 'companion', nameKey: 'cardInkDot', bodyKey: 'cardInkDotBody' },
+  { id: 'weekBloom', rarity: 'epic', colors: ['#F6C9D4', '#E7A0B4', '#FFF5F7'], motif: 'companion', nameKey: 'cardWeekBloom', bodyKey: 'cardWeekBloomBody' },
+  { id: 'streakFlame', rarity: 'epic', colors: ['#F6C4AE', '#E07A55', '#FFF1E8'], motif: 'companion', nameKey: 'cardStreakFlame', bodyKey: 'cardStreakFlameBody' },
+  { id: 'companionBloom', rarity: 'epic', colors: ['#F6CDB8', '#8FAF86', '#FFF6F1'], motif: 'companion', nameKey: 'cardCompanionBloom', bodyKey: 'cardCompanionBloomBody' },
+  { id: 'goldenWedge', rarity: 'legendary', colors: ['#F6E2A8', '#E7C15A', '#FFF8E4'], motif: 'companion', nameKey: 'cardGoldenWedge', bodyKey: 'cardGoldenWedgeBody' },
+  { id: 'nightOrbit', rarity: 'legendary', colors: ['#D5DEE8', '#8AA0B8', '#EEF3F8'], motif: 'companion', nameKey: 'cardNightOrbit', bodyKey: 'cardNightOrbitBody' },
+  { id: 'proAurora', rarity: 'epic', proOnly: true, colors: ['#C9F0E4', '#B7A4D6', '#F4FFFB'], motif: 'companion', nameKey: 'cardProAurora', bodyKey: 'cardProAuroraBody' },
+  { id: 'proConstellation', rarity: 'legendary', proOnly: true, colors: ['#E4D8F4', '#B7A4D6', '#F7F4FC'], motif: 'companion', nameKey: 'cardProConstellation', bodyKey: 'cardProConstellationBody' },
+  { id: 'proGilded', rarity: 'legendary', proOnly: true, colors: ['#F6E2A8', '#E7C15A', '#FFF6DC'], motif: 'companion', nameKey: 'cardProGilded', bodyKey: 'cardProGildedBody' },
+  { id: 'proMoonwell', rarity: 'epic', proOnly: true, colors: ['#C9E4DE', '#7EB8B0', '#F3F8F7'], motif: 'companion', nameKey: 'cardProMoonwell', bodyKey: 'cardProMoonwellBody' },
 ];
 
 export const CARD_BY_ID: Record<CardId, CardDef> = Object.fromEntries(CARDS.map((card) => [card.id, card])) as Record<
   CardId,
   CardDef
 >;
+
+type UnlockKey =
+  | 'unlockLevel'
+  | 'unlockStreak'
+  | 'unlockSessions'
+  | 'unlockJustStarts'
+  | 'unlockMoods'
+  | 'unlockWeekly'
+  | 'unlockProLevel'
+  | 'unlockProStreak';
+
+/** The reliable way to earn a card. Daily and weekly drops can arrive sooner. */
+export function cardUnlock(id: CardId): { key: UnlockKey; count?: number } {
+  switch (id) {
+    case 'dawnWedge':
+      return { key: 'unlockLevel', count: 2 };
+    case 'quietLamp':
+      return { key: 'unlockLevel', count: 3 };
+    case 'companionBloom':
+      return { key: 'unlockLevel', count: 5 };
+    case 'goldenWedge':
+      return { key: 'unlockLevel', count: 8 };
+    case 'groveMoss':
+      return { key: 'unlockLevel', count: 10 };
+    case 'nightOrbit':
+      return { key: 'unlockLevel', count: 12 };
+    case 'proAurora':
+      return { key: 'unlockProLevel', count: 15 };
+    case 'proGilded':
+      return { key: 'unlockProLevel', count: 18 };
+    case 'proMoonwell':
+      return { key: 'unlockProLevel', count: 20 };
+    case 'sageLeaf':
+      return { key: 'unlockStreak', count: 3 };
+    case 'streakFlame':
+      return { key: 'unlockStreak', count: 7 };
+    case 'tideShell':
+      return { key: 'unlockStreak', count: 10 };
+    case 'weekBloom':
+      return { key: 'unlockStreak', count: 14 };
+    case 'proConstellation':
+      return { key: 'unlockProStreak', count: 30 };
+    case 'focusPebble':
+      return { key: 'unlockSessions', count: 1 };
+    case 'openPage':
+      return { key: 'unlockSessions', count: 10 };
+    case 'duskRibbon':
+      return { key: 'unlockSessions', count: 25 };
+    case 'justSpark':
+      return { key: 'unlockJustStarts', count: 3 };
+    case 'softRain':
+      return { key: 'unlockMoods', count: 5 };
+    case 'inkDot':
+      return { key: 'unlockWeekly' };
+    default: {
+      const never: never = id;
+      return never;
+    }
+  }
+}
 
 export function defaultRewards(): RewardsState {
   return {
@@ -271,6 +331,7 @@ const LEVEL_CARDS: Record<number, CardId> = {
   8: 'goldenWedge',
   12: 'nightOrbit',
   15: 'proAurora',
+  18: 'proGilded',
   20: 'proMoonwell',
 };
 

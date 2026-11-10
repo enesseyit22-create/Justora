@@ -7,13 +7,10 @@ import { AmbientGlow, Enter, GlassCard } from '@/src/components/chrome';
 import { Press, Screen, Txt } from '@/src/components/ui';
 import { XpBar } from '@/src/components/XpBar';
 import { maxFreezes } from '@/src/domain/rewards';
-import { ACCESSORY_STREAK, companionLevel, computeStreak, estimateBias, minutesBetween, weekStart } from '@/src/domain/time';
-import type { AccessoryId, BadgeId } from '@/src/domain/types';
+import { companionLevel, computeStreak, estimateBias, minutesBetween, weekStart } from '@/src/domain/time';
 import { useI18n } from '@/src/i18n/useI18n';
-import { actions, useApp, useIsPro } from '@/src/store/store';
+import { useApp, useIsPro } from '@/src/store/store';
 import { useTheme } from '@/src/theme/theme';
-
-const BADGES: BadgeId[] = ['first', 'just', 'streak3', 'streak7', 'streak14', 'sessions10', 'estimates5', 'routine', 'break', 'mood'];
 
 export default function StatsScreen() {
   const app = useApp();
@@ -28,19 +25,6 @@ export default function StatsScreen() {
   const total = Math.round(app.sessions.filter((s) => s.kind !== 'break').reduce((sum, s) => sum + s.focusedMs, 0) / 60000);
   const today = minutesBetween(app.sessions, new Date().setHours(0, 0, 0, 0), Date.now() + 1);
   const bias = estimateBias(app.estimates);
-  const unlocked = new Set(app.seenBadges);
-  const names: Record<BadgeId, string> = {
-    first: t('badgeFirst'),
-    just: t('badgeJust'),
-    streak3: t('badgeStreak3'),
-    streak7: t('badgeStreak7'),
-    streak14: t('badgeStreak14'),
-    sessions10: t('badgeSessions'),
-    estimates5: t('badgeEstimates'),
-    routine: t('badgeRoutine'),
-    break: t('badgeBreak'),
-    mood: t('badgeMood'),
-  };
   const levelKey = `level${companionLevel(streak)}` as const;
 
   return (
@@ -107,40 +91,6 @@ export default function StatsScreen() {
         <Txt>{t('weekBody', { count: thisWeek, previous: lastWeek })}</Txt>
         <Txt color={palette.muted}>{t('weekMood', { count: app.moods.length })}</Txt>
       </GlassCard>
-      <Txt weight="bold">{t('accessory')}</Txt>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-        {(['none', 'flower', 'scarf', 'glasses', 'star'] as const).map((id) => {
-          const need = id === 'none' ? 0 : ACCESSORY_STREAK[id as AccessoryId];
-          const locked = streak < need;
-          const on = app.settings.accessory === id;
-          return (
-            <Press
-              key={id}
-              onPress={() => {
-                if (!locked) actions.setSettings({ accessory: id });
-              }}
-              style={{
-                backgroundColor: on ? palette.accent : palette.card,
-                borderRadius: 16,
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                opacity: locked ? 0.45 : 1,
-              }}>
-              <Txt color={on ? palette.accentInk : palette.ink} size={14}>
-                {id === 'none' ? t('accessoryNone') : id === 'flower' ? t('accessoryFlower') : id === 'scarf' ? t('accessoryScarf') : id === 'glasses' ? t('accessoryGlasses') : t('accessoryStar')}
-              </Txt>
-            </Press>
-          );
-        })}
-      </View>
-      <Txt weight="bold">{t('badges')}</Txt>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-        {BADGES.map((id) => (
-          <View key={id} style={{ backgroundColor: unlocked.has(id) ? palette.sageSoft : palette.card, borderRadius: 16, padding: 10, opacity: unlocked.has(id) ? 1 : 0.4 }}>
-            <Txt size={13}>{names[id]}</Txt>
-          </View>
-        ))}
-      </View>
       <Txt weight="bold">{t('trainer')}</Txt>
       <Txt>{bias == null ? t('trainerEmpty') : bias > 0.15 ? t('biasLong') : bias < -0.15 ? t('biasShort') : t('biasClose')}</Txt>
       {pro

@@ -1,6 +1,8 @@
 # App Review notes
 
-Paste this into App Review Information. Adjust the contact line after you replace hello@example.com.
+Paste this into App Review Information.
+
+Contact: enesmeryem5@gmail.com
 
 Justora is a visual focus timer and a short daily list. It does not provide medical advice and does not treat or diagnose any condition.
 
@@ -20,4 +22,4 @@ Widgets and Live Activities appear on an App Store or development build, not in 
 
 Privacy policy URL: host PRIVACY.md and paste the URL here.
 
-Contact: hello@example.com (replace before submit).
+Contact: enesmeryem5@gmail.com
