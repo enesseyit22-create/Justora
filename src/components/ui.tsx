@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { ReactNode } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -26,23 +26,25 @@ export function Screen({
   background?: ReactNode;
 }) {
   const { palette } = useTheme();
+  const { width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const bottom = bottomInset ? insets.bottom : 0;
+  const wide = width >= 768 ? styles.tablet : null;
   const body = scroll ? (
     <ScrollView
-      contentContainerStyle={[styles.scroll, grow && styles.grow]}
+      contentContainerStyle={[styles.scroll, wide, grow && styles.grow]}
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}>
       {children}
     </ScrollView>
   ) : (
-    <View style={styles.fill}>{children}</View>
+    <View style={[styles.fill, wide]}>{children}</View>
   );
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: palette.bg, paddingBottom: bottom }]} edges={['top', 'left', 'right']}>
       {background ? <View pointerEvents="none" style={StyleSheet.absoluteFill}>{background}</View> : null}
       {body}
-      {footer}
+      {footer ? <View style={wide}>{footer}</View> : null}
     </SafeAreaView>
   );
 }
@@ -78,6 +80,7 @@ export function Txt({
   return (
     <Text
       numberOfLines={lines}
+      maxFontSizeMultiplier={1.4}
       style={[
         {
           color: color ?? palette.ink,
@@ -231,6 +234,7 @@ export function Field({
       onChangeText={onChangeText}
       placeholder={placeholder}
       placeholderTextColor={palette.muted}
+      maxFontSizeMultiplier={1.4}
       style={[
         styles.field,
         {
@@ -245,6 +249,7 @@ export function Field({
 
 const styles = StyleSheet.create({
   safe: { flex: 1 },
+  tablet: { maxWidth: 720, width: '100%', alignSelf: 'center' },
   fill: { flex: 1, paddingHorizontal: 20 },
   scroll: { paddingHorizontal: 20, paddingBottom: 28, gap: 14 },
   grow: { flexGrow: 1, justifyContent: 'space-evenly' },

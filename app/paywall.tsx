@@ -1,9 +1,10 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Platform, View } from 'react-native';
+import { Platform, Linking, View } from 'react-native';
 
 import { Companion } from '@/src/components/Companion';
 import { Press, PrimaryButton, Screen, Txt } from '@/src/components/ui';
+import { PRIVACY_URL, TERMS_URL, APPLE_EULA_URL } from '@/src/config';
 import type { PlanInfo } from '@/src/services/purchases';
 import { useI18n } from '@/src/i18n/useI18n';
 import { actions, useApp, useIsPro } from '@/src/store/store';
@@ -34,11 +35,11 @@ export default function PaywallScreen() {
   const store = Platform.OS === 'android' ? t('storeGoogle') : t('storeApple');
   const period = plan === 'yearly' ? t('periodYear') : t('periodMonth');
   const disclosure =
-    trialDays && selected
+    trialDays && selected?.priceString
       ? t('disclosureTrial', { name: t('appName'), period, price: selected.priceString, days: trialDays, account, store })
-      : selected
+      : selected?.priceString
         ? t('disclosurePaid', { name: t('appName'), period, price: selected.priceString, account, store })
-        : t('paySubtitle');
+        : t('disclosureCheckout', { name: t('appName'), store, account });
   const save = savingsPercent(plans.monthly, plans.yearly);
   const features = [t('feature1'), t('feature2'), t('feature3'), t('feature4'), t('feature5'), t('feature6')];
   const cta = pro
@@ -113,7 +114,7 @@ export default function PaywallScreen() {
         onPress={() => setPlan('monthly')}
       />
       <Txt size={13} color={palette.muted}>
-        {selected?.priceString ? disclosure : t('priceAtCheckout')}
+        {disclosure}
       </Txt>
       {storeReady || pro ? null : __DEV__ ? (
         <Txt size={13} color={palette.sage}>
@@ -149,11 +150,16 @@ export default function PaywallScreen() {
       <Txt size={12} color={palette.muted} center>
         {t('payMedical')}
       </Txt>
-      <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 16 }}>
-        <Press onPress={() => router.push('/terms')} style={{ minHeight: 44, justifyContent: 'center' }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
+        <Press onPress={() => void Linking.openURL(TERMS_URL)} style={{ minHeight: 44, justifyContent: 'center' }}>
           <Txt color={palette.accent}>{t('terms')}</Txt>
         </Press>
-        <Press onPress={() => router.push('/privacy')} style={{ minHeight: 44, justifyContent: 'center' }}>
+        {Platform.OS === 'ios' ? (
+          <Press onPress={() => void Linking.openURL(APPLE_EULA_URL)} style={{ minHeight: 44, justifyContent: 'center' }}>
+            <Txt color={palette.accent}>{t('termsEula')}</Txt>
+          </Press>
+        ) : null}
+        <Press onPress={() => void Linking.openURL(PRIVACY_URL)} style={{ minHeight: 44, justifyContent: 'center' }}>
           <Txt color={palette.accent}>{t('privacy')}</Txt>
         </Press>
       </View>

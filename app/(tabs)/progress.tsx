@@ -2,8 +2,8 @@ import { router } from 'expo-router';
 import { useRef, type ReactNode } from 'react';
 import { Share, View } from 'react-native';
 
-import { WearArt, SceneArt } from '@/src/components/AccessoryArt';
 import { CollectibleCard } from '@/src/components/CollectibleCard';
+import { Companion } from '@/src/components/Companion';
 import { AmbientGlow, Enter, FocusRing, GlassCard } from '@/src/components/chrome';
 import { Press, PrimaryButton, Screen, Txt } from '@/src/components/ui';
 import {
@@ -252,7 +252,7 @@ export default function ProgressScreen() {
                 key={id}
                 title={t(rule.nameKey)}
                 selected={settings.accessory === id}
-                art={<WearArt id={id} size={64} />}
+                art={<Companion size={84} accessory={id} />}
                 hint={!earned ? (rule.sessions > 0 ? t('lookSessions', { count: rule.sessions }) : t('accessoryLocked', { count: rule.streak })) : rule.pro && !pro ? t('lookPro') : undefined}
                 onPress={() => {
                   const result = actions.setSettings({ accessory: id });
@@ -277,7 +277,7 @@ export default function ProgressScreen() {
                 key={id}
                 title={t(rule.nameKey)}
                 selected={settings.backdrop === id}
-                art={<SceneArt id={id} size={64} />}
+                art={<Companion size={84} backdrop={id} />}
                 hint={!earned ? (rule.sessions > 0 ? t('lookSessions', { count: rule.sessions }) : t('accessoryLocked', { count: rule.streak })) : rule.pro && !pro ? t('lookPro') : undefined}
                 onPress={() => {
                   const result = actions.setSettings({ backdrop: id });
@@ -320,7 +320,7 @@ function LookCard({
         gap: 4,
         minHeight: 118,
       }}>
-      <View style={{ height: 64, alignItems: 'center', justifyContent: 'center' }}>{art}</View>
+      <View style={{ height: 88, alignItems: 'center', justifyContent: 'center' }}>{art}</View>
       <Txt size={14} weight="bold" lines={2}>
         {title}
       </Txt>

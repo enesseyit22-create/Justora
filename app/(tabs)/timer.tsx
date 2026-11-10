@@ -326,7 +326,7 @@ export default function TimerScreen() {
               void (async () => {
                 const ok = await requestNotificationPermission();
                 actions.markNotifPrompted();
-                if (!ok) void Linking.openSettings();
+                if (!ok) return;
               })();
             }}
           />

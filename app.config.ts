@@ -19,7 +19,6 @@ const config: ExpoConfig = {
   ios: {
     supportsTablet: true,
     bundleIdentifier: 'com.fishmaps.justora',
-    buildNumber: '1',
     icon: {
       light: './assets/images/icon-light.png',
       dark: './assets/images/icon-dark.png',
@@ -50,7 +49,6 @@ const config: ExpoConfig = {
   },
   android: {
     package: 'com.fishmaps.justora',
-    versionCode: 1,
     adaptiveIcon: {
       foregroundImage: './assets/images/android-icon-foreground.png',
       backgroundImage: './assets/images/android-icon-background.png',
@@ -72,8 +70,8 @@ const config: ExpoConfig = {
   extra: {
     eas: { projectId },
     contactEmail: process.env.EXPO_PUBLIC_CONTACT_EMAIL || 'enesmeryem5@gmail.com',
-    privacyUrl: process.env.EXPO_PUBLIC_PRIVACY_URL || '',
-    termsUrl: process.env.EXPO_PUBLIC_TERMS_URL || '',
+    privacyUrl: 'https://enesseyit22-create.github.io/Justora/privacy.html',
+    termsUrl: 'https://enesseyit22-create.github.io/Justora/terms.html',
   },
   plugins: [
     'expo-router',

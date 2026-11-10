@@ -1,0 +1,19 @@
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:Nunito,ui-rounded,system-ui,sans-serif;background:#F6F1EA;color:#2C2825;line-height:1.5}
+a{color:#E15D32;text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:720px;margin:0 auto;padding:28px 20px 64px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-weight:800;font-size:22px;letter-spacing:-0.03em}
+.nav{display:flex;gap:14px;flex-wrap:wrap;font-weight:700}
+.langs{display:flex;flex-wrap:wrap;gap:6px;margin:18px 0}
+.langs button{border:0;background:#fff;color:#2C2825;border-radius:999px;padding:6px 10px;font:700 13px Nunito,sans-serif;cursor:pointer}
+.langs button[aria-pressed="true"]{background:#E15D32;color:#fff}
+.card{background:#fff;border-radius:24px;padding:22px 20px;box-shadow:0 10px 30px rgba(107,83,70,.08);margin-top:16px}
+h1{font-size:34px;line-height:1.15;margin:8px 0 10px;letter-spacing:-0.03em}
+h2{font-size:18px;margin:0 0 8px}
+p{margin:0 0 12px}
+.muted{color:#8D8178}
+.mail{display:inline-block;margin-top:8px;font-weight:800}
+@media (max-width:480px){h1{font-size:28px}.wrap{padding:20px 16px 48px}}
