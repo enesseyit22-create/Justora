@@ -8,7 +8,9 @@ Character counts were checked against these exact strings. Keywords are comma-se
 - App Store secondary: Education
 - Google Play: Productivity
 
-The App Store name and the Google Play title are **Justora**, the same name as the home screen and the binary (`CFBundleDisplayName`). Education is the secondary fit for study and lesson blocks. Do not file the app under Medical. Justora does not treat or diagnose ADHD. The words ADHD, DEHB, ADHS, and TDAH are discovery terms for people looking for a gentle timer, not a medical claim.
+The App Store name and the Google Play title are **Justora**, the same name as the home screen and the binary (`CFBundleDisplayName`).
+
+Productivity is where a focus timer, a short list, and routines are found. Education is the secondary fit for study blocks. Do not file the app under Medical. Justora does not treat or diagnose ADHD. The words ADHD, DEHB, ADHS, and TDAH are discovery terms for people looking for a gentle timer, not a medical claim.
 
 ## Search terms used
 
