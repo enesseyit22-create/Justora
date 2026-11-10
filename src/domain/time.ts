@@ -155,6 +155,14 @@ export const ROUTINES = [
       { titleKey: 'routineClean3', min: 10 },
     ],
   },
+  {
+    id: 'evening',
+    tasks: [
+      { titleKey: 'routineEvening1', min: 5 },
+      { titleKey: 'routineEvening2', min: 5 },
+      { titleKey: 'routineEvening3', min: 5 },
+    ],
+  },
 ] as const;
 
 export const BREAK_KEYS = ['break1', 'break2', 'break3', 'break4'] as const;

@@ -1,5 +1,6 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { ReactNode } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -53,27 +54,39 @@ export function Txt({
   color,
   style,
   center,
+  lines,
 }: {
   children: ReactNode;
   size?: number;
-  weight?: 'body' | 'bold' | 'extra';
+  weight?: 'regular' | 'body' | 'bold' | 'extra';
   color?: string;
-  style?: StyleProp<ViewStyle> | object;
+  style?: StyleProp<TextStyle>;
   center?: boolean;
+  lines?: number;
 }) {
   const { palette, fontsReady } = useTheme();
-  const family = fontsReady ? (weight === 'extra' ? font.extra : weight === 'bold' ? font.bold : font.body) : undefined;
+  const family = !fontsReady
+    ? undefined
+    : weight === 'extra'
+      ? font.extra
+      : weight === 'bold'
+        ? font.bold
+        : weight === 'regular'
+          ? font.regular
+          : font.body;
+  const title = size >= 28;
   return (
     <Text
+      numberOfLines={lines}
       style={[
         {
           color: color ?? palette.ink,
           fontSize: size,
-          lineHeight: Math.round(size * 1.35),
+          lineHeight: Math.round(size * (title ? 1.15 : 1.35)),
           fontFamily: family,
           textAlign: center ? 'center' : 'left',
         },
-        style as object,
+        style,
       ]}>
       {children}
     </Text>
@@ -127,12 +140,68 @@ export function PrimaryButton({
 }) {
   const { palette } = useTheme();
   return (
+    <Press label={title} disabled={disabled} onPress={onPress} style={[styles.primaryShadow, { shadowColor: palette.cta }]}>
+      <LinearGradient
+        colors={[palette.cta, palette.accent]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.primary}>
+        <Txt size={18} weight="extra" color={palette.ctaInk} center>
+          {title}
+        </Txt>
+      </LinearGradient>
+    </Press>
+  );
+}
+
+export function SecondaryButton({ title, onPress, disabled }: { title: string; onPress?: () => void; disabled?: boolean }) {
+  const { palette } = useTheme();
+  return (
     <Press
       label={title}
       disabled={disabled}
       onPress={onPress}
-      style={[styles.primary, { backgroundColor: palette.cta, shadowColor: palette.cta }]}>
-      <Txt size={18} weight="extra" color={palette.ctaInk} center>
+      style={[styles.secondary, { backgroundColor: palette.card, borderColor: palette.line, shadowColor: palette.shadow }]}>
+      <Txt size={16} weight="bold" center lines={2}>
+        {title}
+      </Txt>
+    </Press>
+  );
+}
+
+export function GhostButton({ title, onPress }: { title: string; onPress?: () => void }) {
+  const { palette } = useTheme();
+  return (
+    <Press label={title} onPress={onPress} style={styles.ghost}>
+      <Txt size={16} weight="bold" color={palette.accent} center lines={2}>
+        {title}
+      </Txt>
+    </Press>
+  );
+}
+
+export function Chip({
+  title,
+  onPress,
+  selected,
+}: {
+  title: string;
+  onPress?: () => void;
+  selected?: boolean;
+}) {
+  const { palette } = useTheme();
+  return (
+    <Press
+      label={title}
+      onPress={onPress}
+      style={[
+        styles.chip,
+        {
+          backgroundColor: selected ? palette.sageSoft : palette.card,
+          borderColor: selected ? palette.sage : palette.line,
+        },
+      ]}>
+      <Txt size={14} weight="bold" color={selected ? palette.sage : palette.ink} lines={1}>
         {title}
       </Txt>
     </Press>
@@ -179,16 +248,43 @@ const styles = StyleSheet.create({
   fill: { flex: 1, paddingHorizontal: 20 },
   scroll: { paddingHorizontal: 20, paddingBottom: 28, gap: 14 },
   grow: { flexGrow: 1, justifyContent: 'space-evenly' },
+  primaryShadow: {
+    borderRadius: 29,
+    shadowOpacity: 0.22,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 4,
+  },
   primary: {
     minHeight: 58,
     borderRadius: 29,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 18,
-    shadowOpacity: 0.16,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 3,
+    paddingVertical: 12,
+  },
+  secondary: {
+    minHeight: 52,
+    borderRadius: 26,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 1,
+  },
+  ghost: { minHeight: 44, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 8 },
+  chip: {
+    minHeight: 40,
+    borderRadius: 20,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
   },
   card: {
     borderRadius: 24,

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { AccessibilityInfo, Image, StyleSheet, View } from 'react-native';
+import { AccessibilityInfo, Image, StyleSheet } from 'react-native';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
 
-import type { AccessoryId } from '@/src/domain/types';
+import type { AccessoryId, BackdropId } from '@/src/domain/types';
+import { SceneArt, WearArt } from '@/src/components/AccessoryArt';
 import { useTheme } from '@/src/theme/theme';
 
 export type CompanionPose = 'idle' | 'focus' | 'happy' | 'sleepy';
@@ -12,6 +13,7 @@ export function Companion({
   breathing = false,
   float = false,
   accessory = 'none',
+  backdrop = 'none',
   hero = false,
   pose = 'idle',
 }: {
@@ -19,6 +21,7 @@ export function Companion({
   breathing?: boolean;
   float?: boolean;
   accessory?: AccessoryId | 'none';
+  backdrop?: BackdropId;
   hero?: boolean;
   pose?: CompanionPose;
 }) {
@@ -95,23 +98,14 @@ export function Companion({
           shadow,
         ]}
       />
+      {backdrop !== 'none' ? <SceneArt id={backdrop} size={size} /> : null}
       <Image
         accessibilityIgnoresInvertColors
         source={source}
         style={{ width: size, height: size, borderRadius: hero ? size * 0.22 : 0 }}
         resizeMode="contain"
       />
-      {accessory === 'flower' ? <View style={[styles.flower, { backgroundColor: palette.sage, right: size * 0.18, top: size * 0.22 }]} /> : null}
-      {accessory === 'star' ? <View style={[styles.star, { backgroundColor: palette.accent, left: size * 0.42, top: size * 0.08 }]} /> : null}
-      {accessory === 'glasses' ? (
-        <View style={[styles.glasses, { top: size * 0.4, borderColor: palette.ink }]}>
-          <View style={[styles.lens, { borderColor: palette.ink }]} />
-          <View style={[styles.lens, { borderColor: palette.ink }]} />
-        </View>
-      ) : null}
-      {accessory === 'scarf' ? (
-        <View style={[styles.scarf, { backgroundColor: palette.sage, top: size * 0.62, width: size * 0.42 }]} />
-      ) : null}
+      {accessory !== 'none' ? <WearArt id={accessory} size={size} /> : null}
     </Animated.View>
   );
 }
@@ -123,14 +117,4 @@ const styles = StyleSheet.create({
     height: 16,
     borderRadius: 20,
   },
-  flower: { position: 'absolute', width: 16, height: 16, borderRadius: 8 },
-  star: { position: 'absolute', width: 12, height: 12, borderRadius: 3, transform: [{ rotate: '20deg' }] },
-  glasses: {
-    position: 'absolute',
-    alignSelf: 'center',
-    flexDirection: 'row',
-    gap: 4,
-  },
-  lens: { width: 22, height: 14, borderRadius: 8, borderWidth: 2 },
-  scarf: { position: 'absolute', alignSelf: 'center', height: 14, borderRadius: 10 },
 });

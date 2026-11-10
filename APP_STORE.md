@@ -7,163 +7,159 @@ Character counts below were checked against these exact strings.
 ## English (en) — default
 
 - Name (29): Justora: ADHD Timer & Planner
-- Subtitle (25): Visual focus & daily list
+- Subtitle (21): Two minutes is enough
 - Keywords (92): `time blindness,pomodoro,study,body doubling,concentration,productivity,streak,estimate,tasks`
-- Promotional text (119): A disc that shrinks so time is visible, a short daily list, and a two-minute start for the moment beginning feels hard.
+- Promotional text: A circle that shrinks, a two-minute start, and a companion that stays beside you. No account. No ads.
 - Description:
 
-Justora makes time something you can see. A soft disc shrinks as the minutes pass, so you don’t have to hold the math in your head.
+Justora is a focus timer for the task you have been putting off. Two minutes is enough to begin.
 
-Start with two minutes when beginning is the hard part. Keep going for 10 or 25 if you want. Optional check-ins mark halfway and the last five minutes, without a voice talking at you.
+A circle shrinks as the minutes pass, so you can see the time without doing math in your head. Stopping has no penalty.
 
-Today holds a short list. Three to five things is plenty. Tap one to start its timer. Guess how long it will take, then see how that guess compares later. That comparison is a trainer, not a grade.
+A small companion stays beside you. You can focus together, split a task into small steps, and keep a streak with a freeze if you miss a day. Progress shows a weekly summary you can share.
 
-A small companion sits with you while you focus. Rain or brown noise can stay on. A streak and a share card are there if you want them. Nothing here scolds you for stopping.
+There is no account and no ads. Your list, timers, and moods stay on the phone.
 
-Justora Pro adds every timer length, a longer list, history, the full estimate view, and extra themes. Subscriptions renew until you cancel in your App Store account settings.
+Justora Pro adds every timer length, a longer list, history, extra themes, and more companion looks. A subscription renews until you cancel it in your App Store account settings.
 
-Justora is a timer and a list. It does not treat, diagnose, or provide medical advice.
+Justora is a timer and a list. It does not treat, diagnose, or give medical advice.
 
 ## Turkish (tr)
 
 - Name (25): Justora: ADHD Zamanlayıcı
-- Subtitle (26): Görsel odak ve günlük plan
+- Subtitle (28): Başlamak için 2 dakika yeter
 - Keywords (66): `zaman körlüğü,pomodoro,ders,odaklanma,verimlilik,seri,tahmin,görev`
-- Promotional text: Zaman küçülen bir daire olur. Liste kısa kalır. Başlamak zorsa iki dakika yeter.
+- Promotional text: Küçülen bir daire, iki dakikalık bir başlangıç ve yanında duran bir eşlikçi. Hesap yok. Reklam yok.
 - Description:
 
-Justora zamanı görünür kılar. Yumuşak bir daire dakikalar geçtikçe küçülür. Hesabı kafanda tutmazsın.
+Justora, ertelediğin işe iki dakikayla başlaman için bir odak zamanlayıcısıdır.
 
-Başlamak zorsa iki dakika. İstersen 10 ya da 25’e uzatırsın. Yarı yol ve son beş dakika, sessiz bir haberle gelir.
+Daire küçülür, süre görünür. Durunca ceza yoktur.
 
-Bugün kısa bir listedir. Üç ila beş iş yeter. Birine dokun, süresi başlar. Ne kadar süreceğini tahmin et, sonra tahmininle gerçeği yan yana gör. Bu bir alıştırma, bir not değil.
+Küçük bir eşlikçi yanında durur. Birlikte odaklanabilir, işi küçük adımlara bölebilir ve bir gün kaçırırsan seri korumasıyla serini tutabilirsin. İlerleme, paylaşabileceğin haftalık bir özet gösterir.
 
-Odak sırasında küçük bir eşlikçi yanında durur. Yağmur ya da kahverengi gürültü açılabilir. Seri ve paylaşım kartı isteğe bağlıdır. Durmak ayıp değildir.
+Hesap yok, reklam yok. Listen, sürelerin ve notların telefonda kalır.
 
-Justora Pro bütün süreleri, daha uzun listeyi, geçmişi, tahmin karşılaştırmasını ve ek temaları açar. Abonelik, App Store hesap ayarlarından iptal edene kadar yenilenir.
+Justora Pro bütün süreleri, daha uzun listeyi, geçmişi, ek temaları ve daha fazla eşlikçi görünümünü açar. Abonelik, App Store hesap ayarlarından iptal edene kadar yenilenir.
 
 Justora bir zamanlayıcı ve bir listedir. Tedavi etmez, teşhis koymaz, tıbbi tavsiye vermez.
 
 ## German (de)
 
 - Name (28): Justora: ADHS Timer & Planer
-- Subtitle (27): Sichtbare Zeit, kurze Liste
+- Subtitle (20): Zwei Minuten reichen
 - Keywords (92): `zeitblindheit,pomodoro,lernen,konzentration,serie,schätzung,produktivität,fokus,bodydoubling`
-- Promotional text: Eine Scheibe wird kleiner, die Liste bleibt kurz, und zwei Minuten reichen, wenn Anfangen schwer ist.
+- Promotional text: Ein Kreis wird kleiner, zwei Minuten reichen zum Anfang, und eine Begleitung bleibt bei dir. Kein Konto. Keine Werbung.
 - Description:
 
-Justora macht Zeit sichtbar. Eine weiche Scheibe wird kleiner, während die Minuten vergehen. Du musst nicht im Kopf rechnen.
+Justora ist ein Fokus-Timer für die Aufgabe, die du vor dir herschiebst. Zwei Minuten reichen zum Anfangen.
 
-Wenn der Anfang schwer ist, reichen zwei Minuten. Zehn oder fünfundzwanzig gehen danach, wenn du willst. Halbzeit und die letzten fünf Minuten kommen als leiser Hinweis, ohne Stimme.
+Ein Kreis wird kleiner, während die Minuten vergehen. Die Zeit ist sichtbar. Aufhören hat keine Strafe.
 
-Heute ist eine kurze Liste. Drei bis fünf Dinge reichen. Tippe eines an, der Timer startet. Schätze die Dauer, und sieh später, wie nah du lagst. Das ist Übung, keine Note.
+Eine kleine Begleitung bleibt bei dir. Ihr könnt zusammen fokussieren. Eine Aufgabe lässt sich in kleine Schritte teilen. Verpasst du einen Tag, hält ein Serien-Freeze die Serie. Der Fortschritt zeigt eine Wochenübersicht zum Teilen.
 
-Eine kleine Begleitung sitzt mit dir. Regen oder braunes Rauschen kann anbleiben. Serie und Teilkarte sind freiwillig. Aufhören ist in Ordnung.
+Kein Konto und keine Werbung. Liste, Timer und Stimmung bleiben auf dem Telefon.
 
-Justora Pro öffnet alle Längen, eine längere Liste, den Verlauf, den vollen Schätzvergleich und weitere Themen. Das Abo verlängert sich, bis du es in den App-Store-Einstellungen kündigst.
+Justora Pro öffnet alle Längen, eine längere Liste, den Verlauf, weitere Themen und mehr Looks für die Begleitung. Das Abo verlängert sich, bis du es in den App-Store-Einstellungen kündigst.
 
 Justora ist ein Timer und eine Liste. Die App behandelt nicht, stellt keine Diagnose und gibt keinen medizinischen Rat.
 
 ## Spanish (es)
 
 - Name (26): Justora: TDAH Timer y Plan
-- Subtitle (28): Tiempo visible y lista corta
+- Subtitle (18): Dos minutos bastan
 - Keywords (86): `ceguera temporal,pomodoro,estudio,concentracion,racha,estimacion,productividad,enfoque`
-- Promotional text: Un disco que se encoge, una lista corta, y dos minutos para cuando empezar cuesta.
+- Promotional text: Un círculo que se encoge, un inicio de dos minutos y un compañero a tu lado. Sin cuenta. Sin anuncios.
 - Description:
 
-Justora vuelve el tiempo visible. Un disco suave se encoge mientras pasan los minutos. No tienes que calcularlo de cabeza.
+Justora es un temporizador de foco para la tarea que vienes posponiendo. Dos minutos bastan para empezar.
 
-Si empezar cuesta, dos minutos bastan. Luego puedes seguir 10 o 25 si quieres. La mitad y los últimos cinco minutos llegan en un aviso quieto, sin una voz.
+Un círculo se encoge mientras pasan los minutos, así ves el tiempo. Parar no tiene castigo.
 
-Hoy es una lista corta. Tres a cinco cosas sobran. Toca una y arranca su tiempo. Adivina cuánto durará y después mira qué tan cerca estuviste. Es práctica, no una nota.
+Un compañero pequeño se queda a tu lado. Puedes enfocarte juntos, partir una tarea en pasos pequeños y guardar la racha con una congelación si falta un día. El progreso muestra un resumen semanal para compartir.
 
-Un compañero pequeño se queda contigo. Puedes dejar lluvia o ruido marrón. La racha y la tarjeta para compartir son opcionales. Parar está bien.
+No hay cuenta ni anuncios. Tu lista, tus tiempos y tus ánimos se quedan en el teléfono.
 
-Justora Pro abre todas las duraciones, una lista más larga, el historial, la comparación completa y más temas. La suscripción se renueva hasta que la canceles en los ajustes del App Store.
+Justora Pro abre todas las duraciones, una lista más larga, el historial, temas extra y más looks del compañero. La suscripción se renueva hasta que la canceles en los ajustes de tu cuenta del App Store.
 
-Justora es un timer y una lista. No trata, no diagnostica y no da consejo médico.
+Justora es un temporizador y una lista. No trata, no diagnostica y no da consejo médico.
 
 ## French (fr)
 
-- Name (26): Justora: Timer TDAH & Plan
-- Subtitle (27): Temps visible, liste courte
-- Keywords (85): `cecite temporelle,pomodoro,revision,concentration,serie,estimation,productivite,calme`
-- Promotional text: Un disque qui rétrécit, une liste courte, et deux minutes quand commencer est difficile.
+- Name (22): Justora: TDAH minuteur
+- Subtitle (22): Deux minutes suffisent
+- Keywords (84): `temps,pomodoro,étude,concentration,série,estimation,productivité,focus,compagnon`
+- Promotional text: Un cercle qui rétrécit, un départ de deux minutes, et un compagnon à côté de toi. Pas de compte. Pas de pub.
 - Description:
 
-Justora rend le temps visible. Un disque doux rétrécit pendant que les minutes passent. Pas besoin de compter dans ta tête.
+Justora est un minuteur de focus pour la tâche que tu repousses. Deux minutes suffisent pour commencer.
 
-Si commencer est dur, deux minutes suffisent. Dix ou vingt-cinq viennent après, seulement si tu veux. La mi-parcours et les cinq dernières minutes arrivent en silence, sans voix.
+Un cercle rétrécit pendant que les minutes passent, pour que le temps se voie. S’arrêter n’a pas de pénalité.
 
-Aujourd’hui reste une liste courte. Trois à cinq choses, c’est assez. Touche-en une pour lancer sa durée. Estime le temps, puis regarde l’écart plus tard. C’est un entraînement, pas une note.
+Un petit compagnon reste à côté de toi. Vous pouvez vous concentrer ensemble, découper une tâche en petits pas, et garder la série avec un gel si un jour manque. La progression montre un résumé de la semaine à partager.
 
-Un petit compagnon reste avec toi. La pluie ou le bruit brun peuvent rester allumés. La série et la carte à partager sont facultatives. S’arrêter est permis.
+Pas de compte et pas de pub. Ta liste, tes durées et tes notes restent sur le téléphone.
 
-Justora Pro ouvre toutes les durées, une liste plus longue, l’historique, la comparaison complète et d’autres thèmes. L’abonnement se renouvelle jusqu’à annulation dans les réglages de l’App Store.
+Justora Pro ouvre toutes les durées, une liste plus longue, l’historique, des thèmes en plus et d’autres looks pour le compagnon. L’abonnement se renouvelle jusqu’à ce que tu l’annules dans les réglages du compte App Store.
 
-Justora est un timer et une liste. L’app ne soigne pas, ne diagnostique pas et ne donne pas de conseil médical.
+Justora est un minuteur et une liste. L’app ne soigne pas, ne pose pas de diagnostic et ne donne pas d’avis médical.
 
 ## Portuguese (pt-BR)
 
-- Name (27): Justora: Timer TDAH e Plano
-- Subtitle (26): Tempo visível, lista curta
-- Keywords (86): `cegueira temporal,pomodoro,estudo,concentracao,sequencia,estimativa,produtividade,foco`
-- Promotional text: Um disco que encolhe, uma lista curta, e dois minutos para quando começar custa.
+- Name (27): Justora: TDAH Timer e Plano
+- Subtitle (19): Dois minutos bastam
+- Keywords (78): `tempo,pomodoro,estudo,concentração,sequência,estimativa,foco,tarefas`
+- Promotional text: Um círculo que encolhe, um começo de dois minutos e um companheiro ao seu lado. Sem conta. Sem anúncios.
 - Description:
 
-O Justora deixa o tempo visível. Um disco macio encolhe enquanto os minutos passam. Você não precisa fazer a conta de cabeça.
+Justora é um timer de foco para a tarefa que você vem adiando. Dois minutos bastam para começar.
 
-Se começar está difícil, dois minutos bastam. Dez ou vinte e cinco vêm depois, se você quiser. A metade e os cinco minutos finais chegam num aviso quieto, sem voz.
+Um círculo encolhe enquanto os minutos passam, e o tempo fica visível. Parar não tem punição.
 
-Hoje é uma lista curta. Três a cinco coisas chegam. Toque numa para iniciar o tempo dela. Chute a duração e depois veja a diferença. É treino, não nota.
+Um companheiro pequeno fica ao seu lado. Vocês podem focar juntos, dividir uma tarefa em passos pequenos e manter a sequência com um congelamento se faltar um dia. O progresso mostra um resumo da semana para compartilhar.
 
-Um companheiro pequeno fica com você. Chuva ou ruído marrom podem continuar. A sequência e o cartão para compartilhar são opcionais. Parar está tudo bem.
+Não há conta nem anúncios. Sua lista, seus tempos e seus registros ficam no telefone.
 
-O Justora Pro abre todas as durações, uma lista mais longa, o histórico, a comparação completa e mais temas. A assinatura renova até você cancelar nos ajustes da App Store.
+O Justora Pro abre todas as durações, uma lista mais longa, o histórico, temas extras e mais visuais do companheiro. A assinatura renova até você cancelar nos ajustes da conta da App Store.
 
-O Justora é um timer e uma lista. Não trata, não diagnostica e não dá conselho médico.
+Justora é um timer e uma lista. Não trata, não diagnostica e não dá conselho médico.
 
 ## Italian (it)
 
-- Name (27): Justora: Timer ADHD e Piano
-- Subtitle (27): Tempo visibile, lista breve
-- Keywords (78): `cecita temporale,pomodoro,studio,concentrazione,serie,stima,produttivita,calma`
-- Promotional text: Un disco che si riduce, una lista breve, e due minuti quando iniziare è difficile.
+- Name (27): Justora: ADHD Timer e Piano
+- Subtitle (18): Due minuti bastano
+- Keywords (78): `tempo,pomodoro,studio,concentrazione,serie,stima,produttività,focus`
+- Promotional text: Un cerchio che si riduce, un inizio di due minuti e un compagno accanto a te. Nessun account. Nessuna pubblicità.
 - Description:
 
-Justora rende il tempo visibile. Un disco morbido si riduce mentre passano i minuti. Non devi fare il conto a mente.
+Justora è un timer di focus per il compito che stai rimandando. Due minuti bastano per iniziare.
 
-Se iniziare è difficile, due minuti bastano. Dieci o venticinque arrivano dopo, solo se vuoi. Metà tempo e gli ultimi cinque minuti arrivano in un avviso quieto, senza voce.
+Un cerchio si riduce mentre passano i minuti, così il tempo si vede. Fermarsi non ha una penalità.
 
-Oggi è una lista breve. Tre o cinque cose bastano. Tocca una voce per far partire la sua durata. Stima quanto ci vorrà e guarda dopo lo scarto. È un allenamento, non un voto.
+Un piccolo compagno resta accanto a te. Potete concentrarvi insieme, dividere un compito in piccoli passi e tenere la serie con un congelamento se manca un giorno. I progressi mostrano un riepilogo della settimana da condividere.
 
-Un piccolo compagno resta con te. Pioggia o rumore marrone possono restare accesi. Serie e scheda da condividere sono facoltative. Fermarsi va bene.
+Nessun account e nessuna pubblicità. Lista, tempi e note restano sul telefono.
 
-Justora Pro apre tutte le durate, una lista più lunga, la cronologia, il confronto completo e altri temi. L’abbonamento si rinnova finché non lo annulli nelle impostazioni dell’App Store.
+Justora Pro apre tutte le durate, una lista più lunga, la cronologia, temi in più e altri look per il compagno. L’abbonamento si rinnova finché non lo annulli nelle impostazioni dell’account App Store.
 
-Justora è un timer e una lista. Non cura, non formula diagnosi e non dà consigli medici.
+Justora è un timer e una lista. Non cura, non fa diagnosi e non dà consigli medici.
 
 ## Japanese (ja)
 
-- Name (19): Justora: ADHD集中タイマー
-- Subtitle (11): 見える時間と今日の予定
-- Keywords (43): `時間盲,ポモドーロ,勉強,連続,見積もり,生産性,ボディダブル,学習,仕事,習慣,休憩`
-- Promotional text: 時間が縮む円。短い今日のリスト。始めるのが重いときの2分。
+- Name (15): Justora: 集中タイマー
+- Subtitle (10): 始めるなら2分でいい
+- Keywords (42): `ポモドーロ,勉強,集中,連続,見積もり,タスク,フォーカス`
+- Promotional text: 縮む円、2分の開始、そばにいる仲間。アカウントなし。広告なし。
 - Description:
 
-Justoraは時間を見えるようにします。やわらかい円が、分が過ぎるにつれて小さくなります。頭の中で計算しなくて大丈夫です。
+Justoraは、後回しにしている作業を2分で始めるための集中タイマーです。
 
-始めるのが重いときは2分で足ります。そのあと、望むなら10分や25分に伸ばせます。半分と残り5分は、声のない静かな知らせです。
+円が小さくなるので、時間が目でわかります。止めても罰はありません。
 
-今日は短いリストです。三つから五つで十分。ひとつに触れると、その時間が始まります。どれくらいかかるか予想して、あとで差を見ます。採点ではなく、練習です。
+小さな仲間がそばにいます。いっしょに集中したり、作業を小さな手順に分けたり、1日空いても凍結で連続を守ったりできます。進捗には、共有できる今週のまとめがあります。
 
-小さななかまがそばにいます。雨やブラウンノイズを残せます。連続記録と共有カードは、使いたければ。止めても大丈夫です。
+アカウントも広告もありません。リストも時間も記録も、電話の中に残ります。
 
-Justora Proは、すべての長さ、より長いリスト、履歴、予想の全体、追加のテーマを開きます。サブスクリプションは、App Storeのアカウント設定で解約するまで更新されます。
+Justora Proは、すべての長さ、長めのリスト、履歴、追加のテーマ、仲間の見た目を開きます。サブスクリプションは、App Storeのアカウント設定で解約するまで更新されます。
 
 Justoraはタイマーとリストです。治療せず、診断せず、医療上の助言をしません。
-
-## Play Data safety
-
-Use the same answers on Google Play. Justora does not collect a health record and does not treat or diagnose ADHD. Lists stay on the device. A Pro purchase shares an anonymous app user id and the receipt with Google Play and RevenueCat so the subscription can be checked. There is no account, so there is no account-deletion URL. Age rating: Everyone / 4+. Notification permission is requested only after the user starts a timer or turns on the gentle nudge.
