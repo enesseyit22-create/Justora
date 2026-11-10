@@ -67,7 +67,7 @@ const config: ExpoConfig = {
   runtimeVersion: { policy: 'appVersion' },
   updates: {
     url: `https://u.expo.dev/${projectId}`,
-    checkAutomatically: 'NEVER',
+    checkAutomatically: 'ON_LOAD',
   },
   extra: {
     eas: { projectId },
