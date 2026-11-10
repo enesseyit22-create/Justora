@@ -6,6 +6,6 @@ Notifications are scheduled on the device. If you buy Pro, Apple and RevenueCat 
 
 If you install a release build with Expo Update configured, the app may request a JavaScript update. That request includes the project id, platform, and runtime version. Your task list is not uploaded.
 
-The in-app policy is localized. This file is the English source to host before submission. Replace the contact address in the app config before you ship. The placeholder is hello@example.com.
+The in-app policy is localized. This file is the English source to host before submission. The contact address is enesmeryem5@gmail.com.
 
 Last updated: 10 November 2026.

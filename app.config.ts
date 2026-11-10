@@ -71,7 +71,7 @@ const config: ExpoConfig = {
   },
   extra: {
     eas: { projectId },
-    contactEmail: process.env.EXPO_PUBLIC_CONTACT_EMAIL || 'hello@example.com',
+    contactEmail: process.env.EXPO_PUBLIC_CONTACT_EMAIL || 'enesmeryem5@gmail.com',
     privacyUrl: process.env.EXPO_PUBLIC_PRIVACY_URL || '',
     termsUrl: process.env.EXPO_PUBLIC_TERMS_URL || '',
   },

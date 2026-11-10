@@ -15,12 +15,9 @@ export function XpBar({
   const { t } = useI18n();
   const { palette } = useTheme();
   const progress = levelProgress(xp);
+  const label = t('xpBarA11y', { level: progress.level, current: progress.current, needed: progress.needed });
   const bar = (
-    <View
-      accessible
-      accessibilityRole={onPress ? 'button' : 'progressbar'}
-      accessibilityLabel={t('xpBarA11y', { level: progress.level, current: progress.current, needed: progress.needed })}
-      style={{ gap: 6 }}>
+    <View style={{ gap: 6 }}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
         <Txt weight="bold">{t('levelShort', { level: progress.level })}</Txt>
         <Txt size={13} color={palette.muted}>
@@ -32,6 +29,16 @@ export function XpBar({
       </View>
     </View>
   );
-  if (!onPress) return bar;
-  return <Press onPress={onPress}>{bar}</Press>;
+  if (!onPress) {
+    return (
+      <View accessible accessibilityRole="progressbar" accessibilityLabel={label}>
+        {bar}
+      </View>
+    );
+  }
+  return (
+    <Press onPress={onPress} label={label}>
+      {bar}
+    </Press>
+  );
 }

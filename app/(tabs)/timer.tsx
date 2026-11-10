@@ -110,7 +110,7 @@ export default function TimerScreen() {
         size={size}
         fraction={timer ? fraction : 1}
         time={timer ? `${mm}:${ss}` : String(minutes)}
-        caption={timer ? (running ? breath : t('paused')) : t('ahaHint')}
+        caption={timer ? (running ? breath : t('paused')) : minutes === JUST_START_MIN ? t('ahaHint') : t('lengthHint', { count: minutes })}
         breathing={running}
         accessory={settings.accessory}
         breakMode={timer?.kind === 'break'}
@@ -154,7 +154,7 @@ export default function TimerScreen() {
                   }}>
                   <Txt weight="bold" color={selected ? palette.accentInk : palette.ink}>
                     {preset}
-                    {locked ? ' ·' : ''}
+                    {locked ? ' 🔒' : ''}
                   </Txt>
                 </Press>
               );
