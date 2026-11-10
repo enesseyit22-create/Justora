@@ -77,7 +77,7 @@ export default function TimerScreen() {
   const size = Math.min(width - 48, 340);
 
   return (
-    <Screen scroll background={<AmbientGlow />}>
+    <Screen scroll bottomInset={false} background={<AmbientGlow />}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <Txt size={22} weight="extra">
           {t('appName')}

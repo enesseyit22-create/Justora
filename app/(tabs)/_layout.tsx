@@ -1,13 +1,17 @@
 import { SymbolView } from 'expo-symbols';
 import { Tabs } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useI18n } from '@/src/i18n/useI18n';
 import { useTheme } from '@/src/theme/theme';
 import { font } from '@/src/theme/themes';
 
+const TAB_BODY = 56;
+
 export default function TabLayout() {
   const { palette, fontsReady } = useTheme();
   const { t } = useI18n();
+  const insets = useSafeAreaInsets();
   return (
     <Tabs
       screenOptions={{
@@ -17,8 +21,9 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: palette.bg,
           borderTopColor: palette.line,
-          height: 64,
+          height: TAB_BODY + insets.bottom,
           paddingTop: 6,
+          paddingBottom: insets.bottom,
         },
         tabBarLabelStyle: { fontFamily: fontsReady ? font.bold : undefined, fontSize: 11 },
       }}>

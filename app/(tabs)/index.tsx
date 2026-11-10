@@ -54,6 +54,7 @@ export default function TodayScreen() {
     <Screen
       scroll
       grow
+      bottomInset={false}
       background={<AmbientGlow />}
       footer={
         <View style={{ paddingHorizontal: 16, paddingTop: 6, paddingBottom: 8 }}>
