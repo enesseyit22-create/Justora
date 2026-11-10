@@ -20,7 +20,6 @@ import type {
   TimerState,
 } from '@/src/domain/types';
 import {
-  ACCESSORY_STREAK,
   BREAK_KEYS,
   companionLevel,
   computeStreak,
@@ -59,6 +58,7 @@ import {
   weeklyChestCard,
 } from '@/src/domain/rewards';
 import { stepTemplates } from '@/src/domain/breakdown';
+import { lookEarned, focusSessionCount, SCENES, WEARS } from '@/src/domain/looks';
 import { deviceLocale, translate, type Key } from '@/src/i18n';
 import { haptic } from '@/src/services/haptics';
 import { initNotifications, notificationPermission, syncNotifications } from '@/src/services/notifications';
@@ -95,6 +95,8 @@ const defaultSettings = (): Settings => ({
   planMinute: 0,
   streakReminder: true,
   accessory: 'none',
+  backdrop: 'none',
+  breakNudge: true,
   moodDismissedDay: '',
   breakdownDay: '',
   breakdownCount: 0,
@@ -124,6 +126,7 @@ let state: State = {
   seenBadges: [],
   timer: null,
   rewards: defaultRewards(),
+  routineRun: null,
   ready: false,
   entitled: false,
   purchaseState: 'missing-key',
@@ -137,6 +140,7 @@ let state: State = {
 const listeners = new Set<() => void>();
 let persistTimer: ReturnType<typeof setTimeout> | null = null;
 let lastRemaining = 0;
+let breakPing = false;
 
 function emit() {
   listeners.forEach((listener) => listener());
@@ -168,8 +172,8 @@ function patch(partial: Partial<State>, persist = true) {
 function schedulePersist() {
   if (persistTimer) clearTimeout(persistTimer);
   persistTimer = setTimeout(() => {
-    const { settings, tasks, sessions, estimates, moods, seenBadges, timer, rewards } = state;
-    const payload: Persisted = { version: 2, settings, tasks, sessions, estimates, moods, seenBadges, timer, rewards };
+    const { settings, tasks, sessions, estimates, moods, seenBadges, timer, rewards, routineRun } = state;
+    const payload: Persisted = { version: 2, settings, tasks, sessions, estimates, moods, seenBadges, timer, rewards, routineRun };
     void AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   }, 180);
 }
@@ -265,6 +269,8 @@ async function pushSideEffects() {
   const granted = (await notificationPermission()) === 'granted';
   const streak = streakNow();
   const timer = state.timer;
+  const ping = breakPing;
+  breakPing = false;
   await syncNotifications({
     granted,
     sound: state.settings.sound,
@@ -300,7 +306,10 @@ async function pushSideEffects() {
       streakBody: t('notifStreakBody'),
       nudgeTitle: t('nudgeNotifTitle'),
       nudgeBodies: [t('nudge1'), t('nudge2'), t('nudge3'), t('nudge4')],
+      breakTitle: t('breakNotifTitle'),
+      breakBody: t('breakNotifBody'),
     },
+    breakPing: ping,
   });
   const label = timer?.label || 'Justora';
   await syncFocusSurface({
@@ -394,13 +403,20 @@ function archive(reason: 'done' | 'stop', celebrate: boolean) {
     xpGained += XP_TASK;
   }
   syncRewards(rewardEvents);
+  const todayCount = sessions.filter((session) => session.kind !== 'break' && session.focusedMs >= 60_000 && dayKey(session.startedAt) === dayKey(now)).length;
+  const offerBreak =
+    reason === 'done' &&
+    timer.kind !== 'break' &&
+    state.settings.breakNudge &&
+    (focused >= 25 * 60_000 || todayCount >= 3);
+  if (offerBreak && AppState.currentState !== 'active') breakPing = true;
   const celebration: Celebration | null = celebrate
     ? {
         id: uid(),
         code: timer.kind === 'break' ? 'break-done' : reason === 'done' ? 'finished' : 'stopped',
         label: timer.label,
         canExtend: reason === 'done' && timer.kind === 'just-start',
-        offerBreak: reason === 'done' && timer.kind !== 'break',
+        offerBreak,
         badgeId,
         xpGained: xpGained > 0 ? xpGained : undefined,
         sessionId: finishedSessionId,
@@ -465,7 +481,7 @@ function sanitizeRewards(raw: unknown, sessions: Session[], tasks: Task[], moods
 function sanitize(raw: unknown): Persisted {
   const base = defaultSettings();
   if (!raw || typeof raw !== 'object') {
-    return { version: 2, settings: base, tasks: [], sessions: [], estimates: [], moods: [], seenBadges: [], timer: null, rewards: defaultRewards() };
+    return { version: 2, settings: base, tasks: [], sessions: [], estimates: [], moods: [], seenBadges: [], timer: null, rewards: defaultRewards(), routineRun: null };
   }
   const data = raw as Partial<Persisted>;
   const settings = { ...base, ...(data.settings ?? {}) };
@@ -485,6 +501,7 @@ function sanitize(raw: unknown): Persisted {
     rewards: data.version === 2 && data.rewards
       ? sanitizeRewards(data.rewards, sessions, tasks, moods, Boolean(settings.previewPro))
       : backfillRewards({ sessions, tasks, moods, pro: Boolean(settings.previewPro) }),
+    routineRun: data.routineRun && Array.isArray(data.routineRun.steps) ? data.routineRun : null,
   };
   if (!Array.isArray(data.seenBadges)) {
     persisted.seenBadges = unlockedBadges({
@@ -579,9 +596,16 @@ export const actions = {
   setSettings(partial: Partial<Settings>) {
     const settings = { ...state.settings, ...partial };
     if (partial.themeId && partial.themeId !== 'justora' && !isProNow()) return 'locked' as const;
+    const stats = { sessions: focusSessionCount(state.sessions), streak: streakNow() };
     if (partial.accessory && partial.accessory !== 'none') {
-      const need = ACCESSORY_STREAK[partial.accessory];
-      if (streakNow() < need) return 'locked' as const;
+      const rule = WEARS[partial.accessory];
+      if (!lookEarned(rule, stats)) return 'locked' as const;
+      if (rule.pro && !isProNow()) return 'pro' as const;
+    }
+    if (partial.backdrop && partial.backdrop !== 'none') {
+      const rule = SCENES[partial.backdrop];
+      if (!lookEarned(rule, stats)) return 'locked' as const;
+      if (rule.pro && !isProNow()) return 'pro' as const;
     }
     patch({ settings });
     void pushSideEffects();
@@ -782,9 +806,45 @@ export const actions = {
     begin({ label: t('justStart'), minutes: JUST_START_MIN, kind: 'just-start' });
     patch({ settings: { ...state.settings, ahaStarted: true, onboardingDone: true } });
   },
-  startBreak() {
+  startBreak(minutes = 5) {
     const key = BREAK_KEYS[state.sessions.length % BREAK_KEYS.length];
-    begin({ label: t(key), minutes: 5, kind: 'break' });
+    begin({ label: t(key), minutes: minutes === 3 ? 3 : 5, kind: 'break' });
+  },
+  startGuide(id: string) {
+    const routine = ROUTINES.find((item) => item.id === id);
+    if (!routine) return;
+    const steps = routine.tasks.map((item) => ({ title: t(item.titleKey), minutes: 3 }));
+    if (state.timer) archive('stop', false);
+    state = {
+      ...state,
+      routineRun: { routineId: id, index: 0, steps },
+      celebration: null,
+    };
+    begin({ label: steps[0]?.title ?? t('guideStart'), minutes: 3, kind: 'custom' });
+  },
+  nextGuide() {
+    const run = state.routineRun;
+    if (!run) return;
+    if (state.timer) archive('stop', false);
+    const index = (state.routineRun?.index ?? run.index) + 1;
+    const steps = state.routineRun?.steps ?? run.steps;
+    if (index >= steps.length) {
+      patch({
+        routineRun: null,
+        celebration: {
+          id: uid(),
+          code: 'finished',
+          label: t('routineDone'),
+          canExtend: false,
+          offerBreak: false,
+        },
+      });
+      return;
+    }
+    const step = steps[index];
+    state = { ...state, routineRun: { routineId: run.routineId, index, steps }, celebration: null };
+    if (!step) return;
+    begin({ label: step.title, minutes: step.minutes, kind: 'custom' });
   },
   pause() {
     const timer = state.timer;
@@ -889,6 +949,5 @@ export function levelName(streak: number) {
 
 export function accessoryName(id: AccessoryId | 'none') {
   if (id === 'none') return t('accessoryNone');
-  const map = { flower: 'accessoryFlower', scarf: 'accessoryScarf', glasses: 'accessoryGlasses', star: 'accessoryStar' } as const;
-  return t(map[id]);
+  return t(WEARS[id].nameKey);
 }

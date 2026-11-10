@@ -27,11 +27,14 @@ export type NotifyPlan = {
     streakBody: string;
     nudgeTitle: string;
     nudgeBodies: string[];
+    breakTitle: string;
+    breakBody: string;
   };
   nudgeOn: boolean;
   nudgeHour: number;
   nudgeMinute: number;
   startedToday: boolean;
+  breakPing: boolean;
 };
 
 let generation = 0;
@@ -149,6 +152,10 @@ export async function syncNotifications(plan: NotifyPlan): Promise<void> {
         const body = plan.copy.nudgeBodies[(when.getDate() + day) % plan.copy.nudgeBodies.length] ?? plan.copy.nudgeBodies[0]!;
         await schedule(Notifications, when, plan.copy.nudgeTitle, body, false);
       }
+    }
+
+    if (plan.breakPing) {
+      await schedule(Notifications, new Date(Date.now() + 4000), plan.copy.breakTitle, plan.copy.breakBody, false);
     }
   } catch {
     // Missing permission or Expo Go. The timer still runs from timestamps.

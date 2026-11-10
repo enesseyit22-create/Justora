@@ -5,7 +5,7 @@ import { Alert, Modal, useWindowDimensions, View } from 'react-native';
 import { AmbientGlow, Enter, GlassCard } from '@/src/components/chrome';
 import { Companion } from '@/src/components/Companion';
 import { Guide } from '@/src/components/Guide';
-import { Field, Press, PrimaryButton, Screen, Txt } from '@/src/components/ui';
+import { Chip, Field, Press, PrimaryButton, Screen, SecondaryButton, Txt } from '@/src/components/ui';
 import { XpBar } from '@/src/components/XpBar';
 import { dayKey, focusedToday, ROUTINES } from '@/src/domain/time';
 import { useI18n } from '@/src/i18n/useI18n';
@@ -83,7 +83,7 @@ export default function TodayScreen() {
               </Txt>
             </Press>
           </View>
-          <Companion size={companionSize} accessory={settings.accessory} hero breathing float pose={quiet ? 'sleepy' : 'idle'} />
+          <Companion size={companionSize} accessory={settings.accessory} backdrop={settings.backdrop} hero breathing float pose={quiet ? 'sleepy' : 'idle'} />
           <Txt size={18} weight="bold" center>
             {t('homePurpose')}
           </Txt>
@@ -253,27 +253,40 @@ export default function TodayScreen() {
           </Press>
           {listsOpen
             ? ROUTINES.map((routine) => (
-                <Press
-                  key={routine.id}
-                  onPress={() => {
-                    buzz();
-                    const result = actions.addRoutine(routine.id);
-                    if (result === 'limit') {
-                      router.push('/paywall');
-                      return;
-                    }
-                    setListsOpen(false);
-                  }}
-                  style={{ backgroundColor: palette.card, borderRadius: 18, padding: 14, gap: 4 }}>
+                <View key={routine.id} style={{ backgroundColor: palette.card, borderRadius: 18, padding: 14, gap: 8 }}>
                   <Txt weight="bold">
-                    {t(routine.id === 'morning' ? 'routineMorning' : routine.id === 'study' ? 'routineStudy' : 'routineCleaning')}
+                    {t(routine.id === 'morning' ? 'routineMorning' : routine.id === 'study' ? 'routineStudy' : routine.id === 'evening' ? 'routineEvening' : 'routineCleaning')}
                   </Txt>
-                  {routine.tasks.map((item) => (
+                  {routine.tasks.map((item, index) => (
                     <Txt key={item.titleKey} size={14} color={palette.muted}>
-                      {t(item.titleKey)}
+                      {index + 1}. {t(item.titleKey)}
                     </Txt>
                   ))}
-                </Press>
+                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                    <Chip
+                      title={t('addTask')}
+                      onPress={() => {
+                        buzz();
+                        const result = actions.addRoutine(routine.id);
+                        if (result === 'limit') {
+                          router.push('/paywall');
+                          return;
+                        }
+                        setListsOpen(false);
+                      }}
+                    />
+                    <Chip
+                      title={t('guideStart')}
+                      selected
+                      onPress={() => {
+                        buzz();
+                        actions.startGuide(routine.id);
+                        setListsOpen(false);
+                        router.push('/(tabs)/timer');
+                      }}
+                    />
+                  </View>
+                </View>
               ))
             : null}
         </View>

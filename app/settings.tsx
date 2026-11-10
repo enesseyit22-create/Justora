@@ -1,5 +1,6 @@
 import Constants from 'expo-constants';
 import { router } from 'expo-router';
+import { SymbolView } from 'expo-symbols';
 import { useEffect, useState, type ReactNode } from 'react';
 import { Linking, Modal, Platform, Pressable, StyleSheet, Switch, View } from 'react-native';
 
@@ -37,18 +38,18 @@ export default function SettingsScreen() {
       </Txt>
 
       <Section title={t('sectionFocus')}>
-        <Row label={t('sound')} value={settings.sound} onChange={(sound) => actions.setSettings({ sound })} />
-        <Row label={t('haptics')} value={settings.haptics} onChange={(haptics) => actions.setSettings({ haptics })} />
+        <Row label={t('sound')} icon={{ ios: 'speaker.wave.2', android: 'volume_up', web: 'volume_up' }} value={settings.sound} onChange={(sound) => actions.setSettings({ sound })} />
+        <Row label={t('haptics')} icon={{ ios: 'iphone.radiowaves.left.and.right', android: 'vibration', web: 'vibration' }} value={settings.haptics} onChange={(haptics) => actions.setSettings({ haptics })} />
         <Txt weight="bold">{t('checkins')}</Txt>
         <Txt color={palette.muted} size={14}>
           {t('checkinsHint')}
         </Txt>
-        <Row label={t('checkins')} value={settings.checkIns} onChange={(checkIns) => actions.setSettings({ checkIns })} />
+        <Row label={t('checkins')} icon={{ ios: 'bell', android: 'notifications', web: 'notifications' }} value={settings.checkIns} onChange={(checkIns) => actions.setSettings({ checkIns })} />
         <Txt weight="bold">{t('metronome')}</Txt>
         <Txt color={palette.muted} size={14}>
           {t('metronomeHint')}
         </Txt>
-        <Row label={t('metronome')} value={settings.metronome} onChange={(metronome) => actions.setSettings({ metronome })} />
+        <Row label={t('metronome')} icon={{ ios: 'metronome', android: 'timer', web: 'timer' }} value={settings.metronome} onChange={(metronome) => actions.setSettings({ metronome })} />
         <View style={{ flexDirection: 'row', gap: 8 }}>
           {([30, 60, 90] as const).map((sec) => (
             <Press
@@ -74,7 +75,7 @@ export default function SettingsScreen() {
           }}>
           <Txt color={palette.accent}>{perm === 'denied' ? t('notifSettings') : t('notifEnable')}</Txt>
         </Press>
-        <Row label={t('planReminder')} value={settings.planReminder} onChange={(planReminder) => actions.setSettings({ planReminder })} />
+        <Row label={t('planReminder')} icon={{ ios: 'sun.max', android: 'wb_sunny', web: 'wb_sunny' }} value={settings.planReminder} onChange={(planReminder) => actions.setSettings({ planReminder })} />
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
           <Txt>{t('reminderHour')}</Txt>
           <Press onPress={() => actions.setSettings({ planHour: (settings.planHour + 23) % 24 })}>
@@ -85,9 +86,19 @@ export default function SettingsScreen() {
             <Txt size={20}>+</Txt>
           </Press>
         </View>
-        <Row label={t('streakReminder')} value={settings.streakReminder} onChange={(streakReminder) => actions.setSettings({ streakReminder })} />
+        <Row label={t('streakReminder')} icon={{ ios: 'flame', android: 'local_fire_department', web: 'local_fire_department' }} value={settings.streakReminder} onChange={(streakReminder) => actions.setSettings({ streakReminder })} />
+        <Row
+          label={t('breakNudge')}
+          icon={{ ios: 'cup.and.saucer', android: 'free_breakfast', web: 'free_breakfast' }}
+          value={settings.breakNudge}
+          onChange={(breakNudge) => actions.setSettings({ breakNudge })}
+        />
+        <Txt color={palette.muted} size={14}>
+          {t('breakNudgeHint')}
+        </Txt>
         <Row
           label={t('nudgeTitle')}
+          icon={{ ios: 'moon', android: 'bedtime', web: 'bedtime' }}
           value={settings.nudgeOn}
           onChange={(nudgeOn) => {
             if (!nudgeOn) {
@@ -200,7 +211,7 @@ export default function SettingsScreen() {
                 ? t('updatesDev')
                 : t('updatesNone')}
         </Txt>
-        {__DEV__ ? <Row label={t('previewPro')} value={settings.previewPro} onChange={(previewPro) => actions.setSettings({ previewPro })} /> : null}
+        {__DEV__ ? <Row label={t('previewPro')} icon={{ ios: 'star', android: 'star', web: 'star' }} value={settings.previewPro} onChange={(previewPro) => actions.setSettings({ previewPro })} /> : null}
         <Txt color={palette.muted}>
           {t('version')} {Constants.expoConfig?.version ?? '1.0.0'}
         </Txt>
@@ -246,20 +257,51 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   const { palette } = useTheme();
   return (
     <View style={{ gap: 8 }}>
-      <Txt weight="extra" size={18}>
+      <Txt weight="bold" size={13} color={palette.muted} style={{ marginLeft: 8 }}>
         {title}
       </Txt>
-      <View style={{ backgroundColor: palette.card, borderRadius: 20, padding: 14, gap: 10 }}>{children}</View>
+      <View
+        style={{
+          backgroundColor: palette.card,
+          borderRadius: 18,
+          paddingHorizontal: 14,
+          paddingVertical: 8,
+          gap: 4,
+          shadowColor: palette.shadow,
+          shadowOpacity: 0.06,
+          shadowRadius: 12,
+          shadowOffset: { width: 0, height: 6 },
+          elevation: 1,
+        }}>
+        {children}
+      </View>
     </View>
   );
 }
 
-function Row({ label, value, onChange }: { label: string; value: boolean; onChange: (value: boolean) => void }) {
+function Row({
+  label,
+  value,
+  onChange,
+  icon,
+}: {
+  label: string;
+  value: boolean;
+  onChange: (value: boolean) => void;
+  icon?: { ios: string; android: string; web: string };
+}) {
   const { palette } = useTheme();
   return (
-    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', minHeight: 48 }}>
-      <Txt style={{ flex: 1, paddingRight: 12 }}>{label}</Txt>
-      <Switch value={value} onValueChange={onChange} trackColor={{ true: palette.accent, false: palette.line }} />
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 52 }}>
+      {icon ? (
+        <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: palette.sageSoft, alignItems: 'center', justifyContent: 'center' }}>
+          <SymbolView name={icon as never} tintColor={palette.sage} size={16} />
+        </View>
+      ) : null}
+      <Txt style={{ flex: 1 }} lines={2}>
+        {label}
+      </Txt>
+      <Switch value={value} onValueChange={onChange} trackColor={{ true: palette.cta, false: palette.line }} thumbColor="#FFFFFF" />
     </View>
   );
 }

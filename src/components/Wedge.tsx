@@ -3,7 +3,7 @@ import Svg, { Path } from 'react-native-svg';
 
 import { Companion, type CompanionPose } from '@/src/components/Companion';
 import { Txt } from '@/src/components/ui';
-import type { AccessoryId } from '@/src/domain/types';
+import type { AccessoryId, BackdropId } from '@/src/domain/types';
 import { useTheme } from '@/src/theme/theme';
 
 function wedgePath(cx: number, cy: number, r: number, fraction: number) {
@@ -29,6 +29,7 @@ export function TimerDisc({
   size,
   breathing,
   accessory,
+  backdrop = 'none',
   breakMode,
   pose = 'idle',
 }: {
@@ -38,6 +39,7 @@ export function TimerDisc({
   size: number;
   breathing?: boolean;
   accessory?: AccessoryId | 'none';
+  backdrop?: BackdropId;
   breakMode?: boolean;
   pose?: CompanionPose;
 }) {
@@ -80,7 +82,7 @@ export function TimerDisc({
         </View>
       </View>
       <View style={[styles.buddy, { right: size * 0.02, bottom: 0 }]}>
-        <Companion size={pose === 'focus' ? size * 0.46 : size * 0.38} breathing={breathing} accessory={accessory} pose={pose} />
+        <Companion size={pose === 'focus' ? size * 0.46 : size * 0.38} breathing={breathing} accessory={accessory} backdrop={backdrop} pose={pose} />
       </View>
     </View>
   );

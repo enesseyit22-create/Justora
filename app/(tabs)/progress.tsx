@@ -1,7 +1,8 @@
 import { router } from 'expo-router';
-import { useRef } from 'react';
+import { useRef, type ReactNode } from 'react';
 import { Share, View } from 'react-native';
 
+import { WearArt, SceneArt } from '@/src/components/AccessoryArt';
 import { CollectibleCard } from '@/src/components/CollectibleCard';
 import { AmbientGlow, Enter, FocusRing, GlassCard } from '@/src/components/chrome';
 import { Press, PrimaryButton, Screen, Txt } from '@/src/components/ui';
@@ -15,8 +16,9 @@ import {
   focusedMinutesOnDay,
   maxFreezes,
 } from '@/src/domain/rewards';
-import { ACCESSORY_STREAK, computeStreak, dayKey, weekStart } from '@/src/domain/time';
-import type { AccessoryId, BadgeId, Session } from '@/src/domain/types';
+import { focusSessionCount, lookEarned, SCENES, WEARS } from '@/src/domain/looks';
+import { computeStreak, dayKey, weekStart } from '@/src/domain/time';
+import type { AccessoryId, BackdropId, BadgeId, Session } from '@/src/domain/types';
 import type { Key } from '@/src/i18n';
 import { useI18n } from '@/src/i18n/useI18n';
 import { haptic } from '@/src/services/haptics';
@@ -235,49 +237,99 @@ export default function ProgressScreen() {
       </Enter>
 
       <Enter delay={230}>
-        <Txt weight="bold">{t('accessory')}</Txt>
+        <Txt weight="bold">{t('accessoryWear')}</Txt>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-          {(['none', 'flower', 'scarf', 'glasses', 'star'] as const).map((id) => {
-            const need = id === 'none' ? 0 : ACCESSORY_STREAK[id as AccessoryId];
-            const locked = streak < need;
-            const on = settings.accessory === id;
+          <LookCard
+            title={t('accessoryNone')}
+            selected={settings.accessory === 'none'}
+            onPress={() => actions.setSettings({ accessory: 'none' })}
+          />
+          {(Object.keys(WEARS) as AccessoryId[]).map((id) => {
+            const rule = WEARS[id];
+            const earned = lookEarned(rule, { sessions: focusSessionCount(sessions), streak });
             return (
-              <Press
+              <LookCard
                 key={id}
+                title={t(rule.nameKey)}
+                selected={settings.accessory === id}
+                art={<WearArt id={id} size={64} />}
+                hint={!earned ? (rule.sessions > 0 ? t('lookSessions', { count: rule.sessions }) : t('accessoryLocked', { count: rule.streak })) : rule.pro && !pro ? t('lookPro') : undefined}
                 onPress={() => {
-                  if (!locked) actions.setSettings({ accessory: id });
+                  const result = actions.setSettings({ accessory: id });
+                  if (result === 'pro') router.push('/paywall');
                 }}
-                style={{
-                  backgroundColor: on ? palette.accent : palette.card,
-                  borderRadius: 16,
-                  paddingHorizontal: 12,
-                  paddingVertical: 8,
-                  opacity: locked ? 0.45 : 1,
-                }}>
-                <View>
-                  <Txt color={on ? palette.accentInk : palette.ink} size={14}>
-                    {id === 'none'
-                      ? t('accessoryNone')
-                      : id === 'flower'
-                        ? t('accessoryFlower')
-                        : id === 'scarf'
-                          ? t('accessoryScarf')
-                          : id === 'glasses'
-                            ? t('accessoryGlasses')
-                            : t('accessoryStar')}
-                  </Txt>
-                  {locked ? (
-                    <Txt size={11} color={on ? palette.accentInk : palette.muted}>
-                      {t('accessoryLocked', { count: need })}
-                    </Txt>
-                  ) : null}
-                </View>
-              </Press>
+              />
+            );
+          })}
+        </View>
+        <Txt weight="bold">{t('accessoryScene')}</Txt>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+          <LookCard
+            title={t('accessoryNone')}
+            selected={settings.backdrop === 'none'}
+            onPress={() => actions.setSettings({ backdrop: 'none' })}
+          />
+          {(Object.keys(SCENES) as Exclude<BackdropId, 'none'>[]).map((id) => {
+            const rule = SCENES[id];
+            const earned = lookEarned(rule, { sessions: focusSessionCount(sessions), streak });
+            return (
+              <LookCard
+                key={id}
+                title={t(rule.nameKey)}
+                selected={settings.backdrop === id}
+                art={<SceneArt id={id} size={64} />}
+                hint={!earned ? (rule.sessions > 0 ? t('lookSessions', { count: rule.sessions }) : t('accessoryLocked', { count: rule.streak })) : rule.pro && !pro ? t('lookPro') : undefined}
+                onPress={() => {
+                  const result = actions.setSettings({ backdrop: id });
+                  if (result === 'pro') router.push('/paywall');
+                }}
+              />
             );
           })}
         </View>
       </Enter>
     </Screen>
+  );
+}
+
+function LookCard({
+  title,
+  selected,
+  onPress,
+  art,
+  hint,
+}: {
+  title: string;
+  selected: boolean;
+  onPress: () => void;
+  art?: ReactNode;
+  hint?: string;
+}) {
+  const { palette } = useTheme();
+  return (
+    <Press
+      onPress={onPress}
+      style={{
+        width: '47%',
+        flexGrow: 1,
+        backgroundColor: selected ? palette.sageSoft : palette.card,
+        borderRadius: 18,
+        borderWidth: 1,
+        borderColor: selected ? palette.sage : palette.line,
+        padding: 10,
+        gap: 4,
+        minHeight: 118,
+      }}>
+      <View style={{ height: 64, alignItems: 'center', justifyContent: 'center' }}>{art}</View>
+      <Txt size={14} weight="bold" lines={2}>
+        {title}
+      </Txt>
+      {hint ? (
+        <Txt size={12} color={palette.muted} lines={2}>
+          {hint}
+        </Txt>
+      ) : null}
+    </Press>
   );
 }
 

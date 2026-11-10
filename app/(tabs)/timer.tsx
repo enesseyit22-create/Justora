@@ -5,7 +5,7 @@ import { Linking, View, useWindowDimensions } from 'react-native';
 import { AmbientGlow, GlassCard } from '@/src/components/chrome';
 import { FinishBurst } from '@/src/components/FinishBurst';
 import { TimerDisc } from '@/src/components/Wedge';
-import { Field, Press, PrimaryButton, Screen, Txt } from '@/src/components/ui';
+import { Field, Press, PrimaryButton, Screen, SecondaryButton, Txt } from '@/src/components/ui';
 import { FREE_PRESET_MIN, JUST_START_MIN, PRESETS } from '@/src/config';
 import { remainingMs } from '@/src/domain/time';
 import { useI18n } from '@/src/i18n/useI18n';
@@ -16,7 +16,7 @@ import { router } from 'expo-router';
 
 export default function TimerScreen() {
   const params = useLocalSearchParams<{ aha?: string; just?: string; minutes?: string }>();
-  const { timer, settings, celebration, sessions } = useApp();
+  const { timer, settings, celebration, sessions, routineRun } = useApp();
   const pro = useIsPro();
   const { t } = useI18n();
   const { palette } = useTheme();
@@ -134,10 +134,25 @@ export default function TimerScreen() {
         caption={timer ? (running ? breath : t('paused')) : minutes === JUST_START_MIN ? t('ahaHint') : t('lengthHint', { count: minutes })}
         breathing={running}
         accessory={settings.accessory}
+        backdrop={settings.backdrop}
         breakMode={timer?.kind === 'break'}
         pose={running || alongside ? 'focus' : timer ? 'idle' : 'sleepy'}
       />
       {timer ? <Txt center weight="bold">{timer.label}</Txt> : null}
+      {routineRun ? (
+        <GlassCard style={{ gap: 8 }}>
+          <Txt size={13} color={palette.muted}>
+            {t('guideStep', { current: routineRun.index + 1, total: routineRun.steps.length })}
+          </Txt>
+          <Txt size={20} weight="extra">
+            {routineRun.steps[routineRun.index]?.title}
+          </Txt>
+          <SecondaryButton
+            title={routineRun.index + 1 >= routineRun.steps.length ? t('guideFinish') : t('guideNext')}
+            onPress={() => actions.nextGuide()}
+          />
+        </GlassCard>
+      ) : null}
       {alongside ? (
         <Txt center color={palette.muted}>
           {t(encourage === 0 ? 'encourage1' : encourage === 1 ? 'encourage2' : 'encourage3')}
@@ -269,7 +284,16 @@ export default function TimerScreen() {
           ) : null}
           {celebration.xpGained ? <Txt color={palette.sage}>{t('xpGained', { count: celebration.xpGained })}</Txt> : null}
           {celebration.badgeId ? <Txt color={palette.sage}>{t('badgeNew', { name: badgeLabel(celebration.badgeId, t) })}</Txt> : null}
-          {celebration.offerBreak ? <PrimaryButton title={t('breakTake')} onPress={() => actions.startBreak()} /> : null}
+          {celebration.offerBreak ? (
+            <View style={{ flexDirection: 'row', gap: 8 }}>
+              <View style={{ flex: 1 }}>
+                <SecondaryButton title={t('breakFor3')} onPress={() => actions.startBreak(3)} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <SecondaryButton title={t('breakFor5')} onPress={() => actions.startBreak(5)} />
+              </View>
+            </View>
+          ) : null}
           {!pro && !settings.paywallSeen ? (
             <Press onPress={() => router.push('/paywall')} style={{ minHeight: 44, justifyContent: 'center' }}>
               <Txt center weight="bold" color={palette.accent}>

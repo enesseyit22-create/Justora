@@ -90,7 +90,9 @@ export const themes: Record<ThemeId, ThemePair> = {
 export const themeOrder: ThemeId[] = ['justora', 'tide', 'grove', 'dusk', 'ink'];
 
 export const font = {
-  body: 'Nunito_600SemiBold',
+  regular: 'Nunito_400Regular',
+  body: 'Nunito_500Medium',
+  semibold: 'Nunito_600SemiBold',
   bold: 'Nunito_700Bold',
   extra: 'Nunito_800ExtraBold',
 };

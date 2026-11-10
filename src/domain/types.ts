@@ -2,7 +2,8 @@ export type ThemeId = 'justora' | 'tide' | 'grove' | 'dusk' | 'ink';
 export type AppLocale = 'en' | 'tr' | 'de' | 'es' | 'fr' | 'pt-BR' | 'it' | 'ja';
 export type LocaleSetting = 'system' | AppLocale;
 export type AmbientMix = { rain: number; brown: number };
-export type AccessoryId = 'flower' | 'scarf' | 'glasses' | 'star';
+export type AccessoryId = 'flower' | 'cap' | 'scarf' | 'glasses' | 'beret' | 'ribbon' | 'rounds' | 'star';
+export type BackdropId = 'none' | 'sunset' | 'meadow' | 'night';
 export type Mood = 'heavy' | 'foggy' | 'steady' | 'bright';
 export type SessionFeel = 'rough' | 'low' | 'ok' | 'good' | 'great';
 export type SessionKind = 'preset' | 'custom' | 'just-start' | 'task' | 'break';
@@ -98,6 +99,8 @@ export type Settings = {
   planMinute: number;
   streakReminder: boolean;
   accessory: AccessoryId | 'none';
+  backdrop: BackdropId;
+  breakNudge: boolean;
   moodDismissedDay: string;
   breakdownDay: string;
   breakdownCount: number;
@@ -172,6 +175,12 @@ export type Celebration = {
   sessionId?: string;
 };
 
+export type RoutineRun = {
+  routineId: string;
+  index: number;
+  steps: { title: string; minutes: number }[];
+};
+
 export type Persisted = {
   version: 1 | 2;
   settings: Settings;
@@ -182,4 +191,5 @@ export type Persisted = {
   seenBadges: BadgeId[];
   timer: TimerState | null;
   rewards: RewardsState;
+  routineRun: RoutineRun | null;
 };
