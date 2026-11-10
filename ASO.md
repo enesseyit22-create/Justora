@@ -8,7 +8,7 @@ Character counts were checked against these exact strings. Keywords are comma-se
 - App Store secondary: Education
 - Google Play: Productivity
 
-Productivity is the primary search home for a focus timer, a short list, and routines. Education is the secondary fit for study and lesson blocks. Do not file the app under Medical. Justora does not treat or diagnose ADHD. The words ADHD, DEHB, ADHS, and TDAH are discovery terms for people looking for a gentle timer, not a medical claim.
+The App Store name and the Google Play title are **Justora**, the same name as the home screen and the binary (`CFBundleDisplayName`). Education is the secondary fit for study and lesson blocks. Do not file the app under Medical. Justora does not treat or diagnose ADHD. The words ADHD, DEHB, ADHS, and TDAH are discovery terms for people looking for a gentle timer, not a medical claim.
 
 ## Search terms used
 
@@ -25,9 +25,9 @@ Japanese: 集中, タイマー, ポモドーロ, 先延ばし, 勉強, ルーテ
 
 ### App Store
 
-- Name (19/30): Justora: ADHD Focus
+- Name (7/30): Justora
 - Subtitle (21/30): Two minutes is enough
-- Keywords (70/100): `pomodoro,procrastination,study,routine,todo,timer,tasks,streak,planner`
+- Keywords (75/100): `adhd,pomodoro,procrastination,study,routine,todo,timer,tasks,streak,planner`
 - Promotional text (120/170): A circle that shrinks, a two-minute start, and a companion beside you. No account. No ads. Your list stays on the phone.
 - Description (717/4000):
 
@@ -45,7 +45,7 @@ Justora is a timer and a list. It does not treat, diagnose, or give medical advi
 
 ### Google Play
 
-- Title (19/30): Justora: ADHD Focus
+- Title (7/30): Justora
 - Short description (71/80): A focus timer for the task you keep putting off. Two minutes is enough.
 - Full description (717/4000): same text as the App Store description above.
 
@@ -53,9 +53,9 @@ Justora is a timer and a list. It does not treat, diagnose, or give medical advi
 
 ### App Store
 
-- Name (18/30): Justora: DEHB Odak
+- Name (7/30): Justora
 - Subtitle (28/30): Başlamak için 2 dakika yeter
-- Keywords (59/100): `erteleme,pomodoro,zamanlayıcı,ders,rutin,görev,seri,çalışma`
+- Keywords (64/100): `dehb,erteleme,pomodoro,zamanlayıcı,ders,rutin,görev,seri,çalışma`
 - Promotional text (119/170): Küçülen bir daire, iki dakikalık başlangıç ve yanında duran bir eşlikçi. Hesap yok. Reklam yok. Listen telefonda kalır.
 - Description (669/4000):
 
@@ -73,7 +73,7 @@ Justora bir zamanlayıcı ve bir listedir. Tedavi etmez, teşhis koymaz, tıbbi 
 
 ### Google Play
 
-- Title (18/30): Justora: DEHB Odak
+- Title (7/30): Justora
 - Short description (62/80): Ertelediğin işe iki dakikayla başlayan bir odak zamanlayıcısı.
 - Full description (669/4000): same text as the App Store description above.
 
@@ -81,9 +81,9 @@ Justora bir zamanlayıcı ve bir listedir. Tedavi etmez, teşhis koymaz, tıbbi 
 
 ### App Store
 
-- Name (19/30): Justora: ADHS Fokus
+- Name (7/30): Justora
 - Subtitle (20/30): Zwei Minuten reichen
-- Keywords (72/100): `pomodoro,prokrastination,aufschieben,lernen,routine,timer,aufgaben,serie`
+- Keywords (77/100): `adhs,pomodoro,prokrastination,aufschieben,lernen,routine,timer,aufgaben,serie`
 - Promotional text (119/170): Ein Kreis wird kleiner, zwei Minuten reichen zum Anfang, und eine Begleitung bleibt bei dir. Kein Konto. Keine Werbung.
 - Description (828/4000):
 
@@ -101,7 +101,7 @@ Justora ist ein Timer und eine Liste. Die App behandelt nicht, stellt keine Diag
 
 ### Google Play
 
-- Title (19/30): Justora: ADHS Fokus
+- Title (7/30): Justora
 - Short description (74/80): Ein Fokus-Timer für die Aufgabe, die du aufschiebst. Zwei Minuten reichen.
 - Full description (828/4000): same text as the App Store description above.
 
@@ -109,9 +109,9 @@ Justora ist ein Timer und eine Liste. Die App behandelt nicht, stellt keine Diag
 
 ### App Store
 
-- Name (20/30): Justora: TDAH y Foco
+- Name (7/30): Justora
 - Subtitle (18/30): Dos minutos bastan
-- Keywords (79/100): `pomodoro,procrastinacion,estudio,rutina,tareas,temporizador,concentracion,racha`
+- Keywords (84/100): `tdah,pomodoro,procrastinacion,estudio,rutina,tareas,temporizador,concentracion,racha`
 - Promotional text (102/170): Un círculo que se encoge, un inicio de dos minutos y un compañero a tu lado. Sin cuenta. Sin anuncios.
 - Description (793/4000):
 
@@ -129,7 +129,7 @@ Justora es un temporizador y una lista. No trata, no diagnostica y no da consejo
 
 ### Google Play
 
-- Title (20/30): Justora: TDAH y Foco
+- Title (7/30): Justora
 - Short description (61/80): Un temporizador de foco para la tarea que vienes posponiendo.
 - Full description (793/4000): same text as the App Store description above.
 
@@ -137,9 +137,9 @@ Justora es un temporizador y una lista. No trata, no diagnostica y no da consejo
 
 ### App Store
 
-- Name (19/30): Justora: TDAH Focus
+- Name (7/30): Justora
 - Subtitle (22/30): Deux minutes suffisent
-- Keywords (74/100): `pomodoro,procrastination,etude,routine,taches,minuteur,concentration,serie`
+- Keywords (79/100): `tdah,pomodoro,procrastination,etude,routine,taches,minuteur,concentration,serie`
 - Promotional text (108/170): Un cercle qui rétrécit, un départ de deux minutes, et un compagnon à côté de toi. Pas de compte. Pas de pub.
 - Description (840/4000):
 
@@ -157,7 +157,7 @@ Justora est un minuteur et une liste. L’app ne soigne pas, ne pose pas de diag
 
 ### Google Play
 
-- Title (19/30): Justora: TDAH Focus
+- Title (7/30): Justora
 - Short description (76/80): Un minuteur de focus pour la tâche que tu repousses. Deux minutes suffisent.
 - Full description (840/4000): same text as the App Store description above.
 
@@ -165,9 +165,9 @@ Justora est un minuteur et une liste. L’app ne soigne pas, ne pose pas de diag
 
 ### App Store
 
-- Name (18/30): Justora: TDAH Foco
+- Name (7/30): Justora
 - Subtitle (19/30): Dois minutos bastam
-- Keywords (74/100): `pomodoro,procrastinacao,estudo,rotina,tarefas,timer,concentracao,sequencia`
+- Keywords (79/100): `tdah,pomodoro,procrastinacao,estudo,rotina,tarefas,timer,concentracao,sequencia`
 - Promotional text (104/170): Um círculo que encolhe, um começo de dois minutos e um companheiro ao seu lado. Sem conta. Sem anúncios.
 - Description (773/4000):
 
@@ -185,7 +185,7 @@ Justora é um timer e uma lista. Não trata, não diagnostica e não dá conselh
 
 ### Google Play
 
-- Title (18/30): Justora: TDAH Foco
+- Title (7/30): Justora
 - Short description (73/80): Um timer de foco para a tarefa que você vem adiando. Dois minutos bastam.
 - Full description (773/4000): same text as the App Store description above.
 
@@ -193,9 +193,9 @@ Justora é um timer e uma lista. Não trata, não diagnostica e não dá conselh
 
 ### App Store
 
-- Name (19/30): Justora: ADHD Focus
+- Name (7/30): Justora
 - Subtitle (18/30): Due minuti bastano
-- Keywords (75/100): `pomodoro,procrastinazione,studio,routine,compiti,timer,concentrazione,serie`
+- Keywords (80/100): `adhd,pomodoro,procrastinazione,studio,routine,compiti,timer,concentrazione,serie`
 - Promotional text (113/170): Un cerchio che si riduce, un inizio di due minuti e un compagno accanto a te. Nessun account. Nessuna pubblicità.
 - Description (797/4000):
 
@@ -213,7 +213,7 @@ Justora è un timer e una lista. Non cura, non fa diagnosi e non dà consigli me
 
 ### Google Play
 
-- Title (19/30): Justora: ADHD Focus
+- Title (7/30): Justora
 - Short description (73/80): Un timer di focus per il compito che stai rimandando. Due minuti bastano.
 - Full description (797/4000): same text as the App Store description above.
 
@@ -221,9 +221,9 @@ Justora è un timer e una lista. Non cura, non fa diagnosi e non dà consigli me
 
 ### App Store
 
-- Name (15/30): Justora: 集中タイマー
+- Name (7/30): Justora
 - Subtitle (10/30): 始めるなら2分でいい
-- Keywords (29/100): `ポモドーロ,先延ばし,勉強,ルーティン,タスク,連続,習慣`
+- Keywords (37/100): `集中,タイマー,ポモドーロ,先延ばし,勉強,ルーティン,タスク,連続,習慣`
 - Promotional text (45/170): 縮む円、2分の開始、そばにいる仲間。アカウントなし。広告なし。リストは電話の中に残ります。
 - Description (324/4000):
 
@@ -241,6 +241,6 @@ Justoraはタイマーとリストです。治療せず、診断せず、医療�
 
 ### Google Play
 
-- Title (15/30): Justora: 集中タイマー
+- Title (7/30): Justora
 - Short description (35/80): 後回しの作業を2分で始める集中タイマー。アカウントも広告もありません。
 - Full description (324/4000): same text as the App Store description above.

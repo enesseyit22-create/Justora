@@ -16,7 +16,7 @@ How to try it:
 4. After a finished session, See Pro appears until the subscription screen has been opened. Not now returns to the app. Restore purchases is on that screen and in Settings.
 5. Settings has sound, haptics, check-ins, the haptic metronome (off by default), notification reminders, themes, and language. Notification permission is not requested at launch. It is offered the first time a timer is running.
 
-Subscriptions, once products are live: Justora Pro, monthly `focus_pro_monthly` and yearly `focus_pro_yearly`, entitlement `pro`, 7-day free trial configured on the App Store products. The paywall shows the StoreKit price, period, trial (only if the product includes a free intro offer), and auto-renewal terms, plus Terms and Privacy.
+Subscriptions: Justora Pro, monthly `focus_pro_monthly` and yearly `focus_pro_yearly`, entitlement `pro`. The paywall shows the StoreKit price and period. A trial is named only when the product includes a free introductory offer, and the disclosure says it becomes the paid plan unless cancelled at least 24 hours before it ends. Terms of Use, the Apple Standard EULA, Privacy Policy, and Restore Purchases are on the paywall. There is no account and no sign-in.
 
 Widgets and Live Activities appear on an App Store or development build, not in Expo Go. Add the Justora widget from the widget gallery while a timer is running to see the Lock Screen and Dynamic Island.
 

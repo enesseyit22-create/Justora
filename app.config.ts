@@ -70,8 +70,8 @@ const config: ExpoConfig = {
   extra: {
     eas: { projectId },
     contactEmail: process.env.EXPO_PUBLIC_CONTACT_EMAIL || 'enesmeryem5@gmail.com',
-    privacyUrl: process.env.EXPO_PUBLIC_PRIVACY_URL || '',
-    termsUrl: process.env.EXPO_PUBLIC_TERMS_URL || '',
+    privacyUrl: 'https://enesseyit22-create.github.io/Justora/privacy.html',
+    termsUrl: 'https://enesseyit22-create.github.io/Justora/terms.html',
   },
   plugins: [
     'expo-router',

@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import { router } from 'expo-router';
 
 import { Press, Screen, Txt } from '@/src/components/ui';
@@ -16,7 +17,7 @@ export default function TermsScreen() {
       {t('legalTermsBody').split('\n\n').map((paragraph) => (
         <Txt key={paragraph.slice(0, 24)}>{paragraph}</Txt>
       ))}
-      <Txt>{t('termsStores')}</Txt>
+      <Txt>{Platform.OS === 'ios' ? t('termsStoresIos') : t('termsStores')}</Txt>
     </Screen>
   );
 }

@@ -6,7 +6,7 @@ Character counts below were checked against these exact strings.
 
 ## English (en) — default
 
-- Name (29): Justora: ADHD Timer & Planner
+- Name (7): Justora
 - Subtitle (21): Two minutes is enough
 - Keywords (92): `time blindness,pomodoro,study,body doubling,concentration,productivity,streak,estimate,tasks`
 - Promotional text: A circle that shrinks, a two-minute start, and a companion that stays beside you. No account. No ads.
@@ -26,7 +26,7 @@ Justora is a timer and a list. It does not treat, diagnose, or give medical advi
 
 ## Turkish (tr)
 
-- Name (25): Justora: ADHD Zamanlayıcı
+- Name (7): Justora
 - Subtitle (28): Başlamak için 2 dakika yeter
 - Keywords (66): `zaman körlüğü,pomodoro,ders,odaklanma,verimlilik,seri,tahmin,görev`
 - Promotional text: Küçülen bir daire, iki dakikalık bir başlangıç ve yanında duran bir eşlikçi. Hesap yok. Reklam yok.
@@ -46,7 +46,7 @@ Justora bir zamanlayıcı ve bir listedir. Tedavi etmez, teşhis koymaz, tıbbi 
 
 ## German (de)
 
-- Name (28): Justora: ADHS Timer & Planer
+- Name (7): Justora
 - Subtitle (20): Zwei Minuten reichen
 - Keywords (92): `zeitblindheit,pomodoro,lernen,konzentration,serie,schätzung,produktivität,fokus,bodydoubling`
 - Promotional text: Ein Kreis wird kleiner, zwei Minuten reichen zum Anfang, und eine Begleitung bleibt bei dir. Kein Konto. Keine Werbung.
@@ -66,7 +66,7 @@ Justora ist ein Timer und eine Liste. Die App behandelt nicht, stellt keine Diag
 
 ## Spanish (es)
 
-- Name (26): Justora: TDAH Timer y Plan
+- Name (7): Justora
 - Subtitle (18): Dos minutos bastan
 - Keywords (86): `ceguera temporal,pomodoro,estudio,concentracion,racha,estimacion,productividad,enfoque`
 - Promotional text: Un círculo que se encoge, un inicio de dos minutos y un compañero a tu lado. Sin cuenta. Sin anuncios.
@@ -86,7 +86,7 @@ Justora es un temporizador y una lista. No trata, no diagnostica y no da consejo
 
 ## French (fr)
 
-- Name (22): Justora: TDAH minuteur
+- Name (7): Justora
 - Subtitle (22): Deux minutes suffisent
 - Keywords (84): `temps,pomodoro,étude,concentration,série,estimation,productivité,focus,compagnon`
 - Promotional text: Un cercle qui rétrécit, un départ de deux minutes, et un compagnon à côté de toi. Pas de compte. Pas de pub.
@@ -106,7 +106,7 @@ Justora est un minuteur et une liste. L’app ne soigne pas, ne pose pas de diag
 
 ## Portuguese (pt-BR)
 
-- Name (27): Justora: TDAH Timer e Plano
+- Name (7): Justora
 - Subtitle (19): Dois minutos bastam
 - Keywords (78): `tempo,pomodoro,estudo,concentração,sequência,estimativa,foco,tarefas`
 - Promotional text: Um círculo que encolhe, um começo de dois minutos e um companheiro ao seu lado. Sem conta. Sem anúncios.
@@ -126,7 +126,7 @@ Justora é um timer e uma lista. Não trata, não diagnostica e não dá conselh
 
 ## Italian (it)
 
-- Name (27): Justora: ADHD Timer e Piano
+- Name (7): Justora
 - Subtitle (18): Due minuti bastano
 - Keywords (78): `tempo,pomodoro,studio,concentrazione,serie,stima,produttività,focus`
 - Promotional text: Un cerchio che si riduce, un inizio di due minuti e un compagno accanto a te. Nessun account. Nessuna pubblicità.
@@ -146,7 +146,7 @@ Justora è un timer e una lista. Non cura, non fa diagnosi e non dà consigli me
 
 ## Japanese (ja)
 
-- Name (15): Justora: 集中タイマー
+- Name (7): Justora
 - Subtitle (10): 始めるなら2分でいい
 - Keywords (42): `ポモドーロ,勉強,集中,連続,見積もり,タスク,フォーカス`
 - Promotional text: 縮む円、2分の開始、そばにいる仲間。アカウントなし。広告なし。
