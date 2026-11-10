@@ -332,4 +332,10 @@ export const ptBR = {
   cardProGildedBody: 'Uma marca Pro por ficar com o trabalho.',
   cardProMoonwell: 'Poço da lua',
   cardProMoonwellBody: 'Um lugar quieto num nível alto.',
+  todayPlan: 'Plano de hoje',
+  quickStart: 'Começo rápido',
+  recentCard: 'Carta mais recente',
+  recentCardEmpty: 'Cartas novas aparecem aqui quando você foca.',
+  todayFocus: 'Foco de hoje',
+  openCollection: 'Cartas',
 } satisfies Record<Key, string>;

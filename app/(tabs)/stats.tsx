@@ -3,7 +3,8 @@ import { useRef } from 'react';
 import { Share, View } from 'react-native';
 
 import { Companion } from '@/src/components/Companion';
-import { Card, Press, Screen, Txt } from '@/src/components/ui';
+import { AmbientGlow, Enter, GlassCard } from '@/src/components/chrome';
+import { Press, Screen, Txt } from '@/src/components/ui';
 import { XpBar } from '@/src/components/XpBar';
 import { maxFreezes } from '@/src/domain/rewards';
 import { ACCESSORY_STREAK, companionLevel, computeStreak, estimateBias, minutesBetween, weekStart } from '@/src/domain/time';
@@ -43,7 +44,8 @@ export default function StatsScreen() {
   const levelKey = `level${companionLevel(streak)}` as const;
 
   return (
-    <Screen scroll>
+    <Screen scroll background={<AmbientGlow />}>
+      <Enter>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <Txt size={34} weight="extra">
           {t('stats')}
@@ -52,12 +54,16 @@ export default function StatsScreen() {
           <Txt weight="bold">{t('settings')}</Txt>
         </Press>
       </View>
-      <Card>
+      </Enter>
+      <GlassCard>
         <View ref={card as never} collapsable={false} style={{ alignItems: 'center', gap: 6, padding: 8 }}>
-          <Companion size={120} accessory={app.settings.accessory} />
-          <Txt size={42} weight="extra">
-            {streak}
-          </Txt>
+          <Companion size={128} accessory={app.settings.accessory} float hero={false} />
+          <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 8 }}>
+            <Txt size={22}>🔥</Txt>
+            <Txt size={42} weight="extra">
+              {streak}
+            </Txt>
+          </View>
           <Txt>{streak === 0 ? t('streakZero') : t('streakDays', { count: streak })}</Txt>
           <Txt color={palette.muted}>{t('streakFreezeCount', { count: app.rewards.freezeCount })} · {t('streakFreezeHint', { max: maxFreezes(pro) })}</Txt>
           <Txt color={palette.muted}>{t(levelKey)}</Txt>
@@ -95,12 +101,12 @@ export default function StatsScreen() {
             {t('share')}
           </Txt>
         </Press>
-      </Card>
-      <Card>
+      </GlassCard>
+      <GlassCard>
         <Txt weight="bold">{t('weekTitle')}</Txt>
         <Txt>{t('weekBody', { count: thisWeek, previous: lastWeek })}</Txt>
         <Txt color={palette.muted}>{t('weekMood', { count: app.moods.length })}</Txt>
-      </Card>
+      </GlassCard>
       <Txt weight="bold">{t('accessory')}</Txt>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
         {(['none', 'flower', 'scarf', 'glasses', 'star'] as const).map((id) => {
@@ -139,12 +145,12 @@ export default function StatsScreen() {
       <Txt>{bias == null ? t('trainerEmpty') : bias > 0.15 ? t('biasLong') : bias < -0.15 ? t('biasShort') : t('biasClose')}</Txt>
       {pro
         ? app.estimates.slice(-8).reverse().map((item) => (
-            <Card key={item.id}>
+            <GlassCard key={item.id}>
               <Txt weight="bold">{item.label}</Txt>
               <Txt color={palette.muted}>
                 {t('guess', { count: item.guessedMin })} · {t('actual', { count: item.actualMin })}
               </Txt>
-            </Card>
+            </GlassCard>
           ))
         : (
           <Press onPress={() => router.push('/paywall')}>
@@ -157,12 +163,12 @@ export default function StatsScreen() {
           <Txt color={palette.muted}>{t('historyEmpty')}</Txt>
         ) : (
           app.sessions.slice(-12).reverse().map((session) => (
-            <Card key={session.id}>
+            <GlassCard key={session.id}>
               <Txt weight="bold">{session.label}</Txt>
               <Txt color={palette.muted}>
                 {t('minutesValue', { count: Math.max(1, Math.round(session.focusedMs / 60000)) })} · {session.completed ? t('completed') : t('partial')}
               </Txt>
-            </Card>
+            </GlassCard>
           ))
         )
       ) : (

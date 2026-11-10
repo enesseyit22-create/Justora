@@ -332,4 +332,10 @@ export const it = {
   cardProGildedBody: 'Un segno Pro per restare sul lavoro.',
   cardProMoonwell: 'Pozzo di luna',
   cardProMoonwellBody: 'Un luogo fermo a un livello alto.',
+  todayPlan: 'Piano di oggi',
+  quickStart: 'Avvio rapido',
+  recentCard: 'Ultima carta',
+  recentCardEmpty: 'Le nuove carte compariranno qui quando ti concentri.',
+  todayFocus: 'Focus di oggi',
+  openCollection: 'Carte',
 } satisfies Record<Key, string>;

@@ -332,4 +332,10 @@ export const fr = {
   cardProGildedBody: 'Une marque Pro pour rester avec le travail.',
   cardProMoonwell: 'Puits de lune',
   cardProMoonwellBody: 'Un lieu calme à un niveau élevé.',
+  todayPlan: 'Plan du jour',
+  quickStart: 'Démarrage rapide',
+  recentCard: 'Dernière carte',
+  recentCardEmpty: 'De nouvelles cartes apparaîtront ici quand tu te concentres.',
+  todayFocus: 'Focus du jour',
+  openCollection: 'Cartes',
 } satisfies Record<Key, string>;

@@ -2,6 +2,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Linking, View, useWindowDimensions } from 'react-native';
 
+import { AmbientGlow, GlassCard } from '@/src/components/chrome';
 import { TimerDisc } from '@/src/components/Wedge';
 import { Field, Press, PrimaryButton, Screen, Txt } from '@/src/components/ui';
 import { FREE_PRESET_MIN, JUST_START_MIN, PRESETS } from '@/src/config';
@@ -76,7 +77,7 @@ export default function TimerScreen() {
   const size = Math.min(width - 48, 340);
 
   return (
-    <Screen scroll>
+    <Screen scroll background={<AmbientGlow />}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <Txt size={22} weight="extra">
           {t('appName')}
@@ -198,12 +199,12 @@ export default function TimerScreen() {
         </View>
       ) : (
         <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 28 }}>
-          <Circle label={running ? t('pause') : t('resume')} onPress={() => (running ? actions.pause() : actions.resume())} />
-          <Circle label={t('stop')} onPress={() => actions.stop()} />
+          <Circle icon={running ? 'pause' : 'play'} label={running ? t('pause') : t('resume')} onPress={() => (running ? actions.pause() : actions.resume())} />
+          <Circle icon="stop" label={t('stop')} onPress={() => actions.stop()} />
         </View>
       )}
       {celebration ? (
-        <View style={{ backgroundColor: palette.card, borderRadius: 24, padding: 16, gap: 8 }}>
+        <GlassCard style={{ gap: 8 }}>
           <Txt weight="extra" size={24}>
             {celebration.code === 'stopped' ? t('stoppedTitle') : t('doneTitle')}
           </Txt>
@@ -224,7 +225,7 @@ export default function TimerScreen() {
           <Press onPress={() => actions.dismissCelebration()}>
             <Txt color={palette.muted}>{t('imDone')}</Txt>
           </Press>
-        </View>
+        </GlassCard>
       ) : null}
       {!settings.notifPrompted && timer ? (
         <View style={{ backgroundColor: palette.sageSoft, borderRadius: 24, padding: 16, gap: 8 }}>
@@ -263,23 +264,46 @@ function Stepper({ onMinus, onPlus, label }: { onMinus: () => void; onPlus: () =
   );
 }
 
-function Circle({ label, onPress }: { label: string; onPress: () => void }) {
+function Circle({ label, onPress, icon }: { label: string; onPress: () => void; icon: 'pause' | 'play' | 'stop' }) {
   const { palette } = useTheme();
   return (
     <Press onPress={onPress} label={label} style={{ alignItems: 'center', gap: 6 }}>
       <View
         style={{
-          width: 72,
-          height: 72,
-          borderRadius: 36,
+          width: 76,
+          height: 76,
+          borderRadius: 38,
           backgroundColor: palette.card,
           alignItems: 'center',
           justifyContent: 'center',
           shadowColor: palette.shadow,
-          shadowOpacity: 0.1,
-          shadowRadius: 12,
+          shadowOpacity: 0.16,
+          shadowRadius: 16,
+          shadowOffset: { width: 0, height: 8 },
+          elevation: 4,
         }}>
-        <Txt weight="bold">{label.slice(0, 1)}</Txt>
+        {icon === 'pause' ? (
+          <View style={{ flexDirection: 'row', gap: 6 }}>
+            <View style={{ width: 7, height: 22, borderRadius: 2, backgroundColor: palette.ink }} />
+            <View style={{ width: 7, height: 22, borderRadius: 2, backgroundColor: palette.ink }} />
+          </View>
+        ) : icon === 'stop' ? (
+          <View style={{ width: 18, height: 18, borderRadius: 3, backgroundColor: palette.ink }} />
+        ) : (
+          <View
+            style={{
+              width: 0,
+              height: 0,
+              borderLeftWidth: 16,
+              borderTopWidth: 10,
+              borderBottomWidth: 10,
+              borderLeftColor: palette.ink,
+              borderTopColor: 'transparent',
+              borderBottomColor: 'transparent',
+              marginLeft: 4,
+            }}
+          />
+        )}
       </View>
       <Txt size={13} color={palette.muted}>
         {label}

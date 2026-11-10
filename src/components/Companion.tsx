@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 
 import type { AccessoryId } from '@/src/domain/types';
@@ -8,14 +8,19 @@ import { useTheme } from '@/src/theme/theme';
 export function Companion({
   size = 140,
   breathing = false,
+  float = false,
   accessory = 'none',
+  hero = false,
 }: {
   size?: number;
   breathing?: boolean;
+  float?: boolean;
   accessory?: AccessoryId | 'none';
+  hero?: boolean;
 }) {
   const { palette } = useTheme();
   const scale = useSharedValue(1);
+  const lift = useSharedValue(0);
   useEffect(() => {
     if (!breathing) {
       scale.value = 1;
@@ -23,14 +28,36 @@ export function Companion({
     }
     scale.value = withRepeat(withTiming(1.045, { duration: 3600, easing: Easing.inOut(Easing.sin) }), -1, true);
   }, [breathing, scale]);
-  const animated = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+  useEffect(() => {
+    if (!float) {
+      lift.value = 0;
+      return;
+    }
+    lift.value = withRepeat(withTiming(-7, { duration: 2800, easing: Easing.inOut(Easing.sin) }), -1, true);
+  }, [float, lift]);
+  const animated = useAnimatedStyle(() => ({
+    transform: [{ translateY: lift.value }, { scale: scale.value }],
+  }));
+  const shadow = useAnimatedStyle(() => ({
+    transform: [{ scaleX: 1 + (-lift.value) * 0.012 }, { scaleY: 1 }],
+    opacity: 0.16 + (7 + lift.value) * 0.012,
+  }));
+  const source = hero
+    ? require('../../assets/images/companion-hero.png')
+    : require('../../assets/images/companion.png');
   return (
     <Animated.View style={[{ width: size, height: size }, animated]}>
-      <View style={[styles.shadow, { backgroundColor: palette.shadow, width: size * 0.46, top: size * 0.78 }]} />
-      <Animated.Image
+      <Animated.View
+        style={[
+          styles.shadow,
+          { backgroundColor: palette.shadow, width: size * (hero ? 0.58 : 0.46), top: size * (hero ? 0.84 : 0.78) },
+          shadow,
+        ]}
+      />
+      <Image
         accessibilityIgnoresInvertColors
-        source={require('../../assets/images/companion.png')}
-        style={{ width: size, height: size }}
+        source={source}
+        style={{ width: size, height: size, borderRadius: hero ? size * 0.22 : 0 }}
         resizeMode="contain"
       />
       {accessory === 'flower' ? <View style={[styles.flower, { backgroundColor: palette.sage, right: size * 0.18, top: size * 0.22 }]} /> : null}
@@ -52,9 +79,8 @@ const styles = StyleSheet.create({
   shadow: {
     position: 'absolute',
     alignSelf: 'center',
-    height: 14,
+    height: 16,
     borderRadius: 20,
-    opacity: 0.18,
   },
   flower: { position: 'absolute', width: 16, height: 16, borderRadius: 8 },
   star: { position: 'absolute', width: 12, height: 12, borderRadius: 3, transform: [{ rotate: '20deg' }] },

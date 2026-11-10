@@ -331,6 +331,12 @@ export const en = {
   cardProGildedBody: 'A Pro mark for staying with the work.',
   cardProMoonwell: 'Moon well',
   cardProMoonwellBody: 'A still place at a high level.',
+  todayPlan: 'Today\'s plan',
+  quickStart: 'Quick start',
+  recentCard: 'Latest card',
+  recentCardEmpty: 'New cards will show up here as you focus.',
+  todayFocus: 'Today\'s focus',
+  openCollection: 'Collection',
 } as const;
 
 export type Key = keyof typeof en;
@@ -668,4 +674,10 @@ export const tr: Record<Key, string> = {
   cardProGildedBody: 'İşin yanında kalmanın Pro izi.',
   cardProMoonwell: 'Ay kuyusu',
   cardProMoonwellBody: 'Yüksek bir seviyede durgun bir yer.',
+  todayPlan: 'Bugünün planı',
+  quickStart: 'Hızlı başla',
+  recentCard: 'Son kart',
+  recentCardEmpty: 'Odaklandıkça yeni kartlar burada görünür.',
+  todayFocus: 'Bugünün odağı',
+  openCollection: 'Kartlar',
 };

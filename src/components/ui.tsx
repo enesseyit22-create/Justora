@@ -12,10 +12,12 @@ export function Screen({
   children,
   scroll = false,
   footer,
+  background,
 }: {
   children: ReactNode;
   scroll?: boolean;
   footer?: ReactNode;
+  background?: ReactNode;
 }) {
   const { palette } = useTheme();
   const body = scroll ? (
@@ -30,6 +32,7 @@ export function Screen({
   );
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: palette.bg }]} edges={['top', 'left', 'right']}>
+      {background ? <View pointerEvents="none" style={StyleSheet.absoluteFill}>{background}</View> : null}
       {body}
       {footer}
     </SafeAreaView>

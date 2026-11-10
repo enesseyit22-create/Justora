@@ -332,4 +332,10 @@ export const ja = {
   cardProGildedBody: '仕事のそばに残った、Proの印。',
   cardProMoonwell: '月の井戸',
   cardProMoonwellBody: '高いレベルにある、静かな場所。',
+  todayPlan: 'きょうのプラン',
+  quickStart: 'クイックスタート',
+  recentCard: 'いちばん新しいカード',
+  recentCardEmpty: '集中すると、新しいカードがここに出ます。',
+  todayFocus: 'きょうの集中',
+  openCollection: 'カード',
 } satisfies Record<Key, string>;
