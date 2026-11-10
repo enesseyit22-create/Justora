@@ -43,7 +43,7 @@ Create `focus_pro_monthly` and `focus_pro_yearly` with a 7-day introductory offe
 - `privacy/PrivacyInfo.xcprivacy` matches `ios.privacyManifests` in `app.config.ts`. Reasons cover UserDefaults (`CA92.1`), file timestamps (`C617.1`, `0A2A.1`, `3B52.1`), disk space (`E174.1`, `85F4.1`), and system boot time (`35F9.1`), which this dependency set uses. `NSPrivacyTracking` is false. Collected-data types in the manifest are empty. Answer the App Store nutrition form separately: purchases and an anonymous id if RevenueCat is live, and diagnostics only if you enable Expo Update.
 - Permission is requested the first time a timer is running, after an in-app explanation, not at cold launch. `NSUserNotificationsUsageDescription` is localized in `languages/*.json`. iOS still shows its own system dialog. There is no microphone permission.
 - The app works offline. Failed purchase, update, or notification calls leave the timer usable.
-- Contact is enesmeryem5@gmail.com. Host the privacy policy URL before submission.
+- Contact is fishmapss@gmail.com. Host the privacy policy URL before submission.
 
 ## Binary
 
