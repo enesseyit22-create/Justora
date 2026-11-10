@@ -27,4 +27,4 @@ Terms: https://enesseyit22-create.github.io/Justora/terms.html
 
 Apple Standard EULA: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
 
-Contact: enesmeryem5@gmail.com
+Contact: fishmapss@gmail.com

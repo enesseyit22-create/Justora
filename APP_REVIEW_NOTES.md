@@ -2,7 +2,7 @@
 
 Paste this into App Review Information.
 
-Contact: enesmeryem5@gmail.com
+Contact: fishmapss@gmail.com
 
 Justora is a visual focus timer and a short daily list. It does not provide medical advice and does not treat or diagnose any condition.
 
@@ -26,7 +26,7 @@ Terms of Use: https://enesseyit22-create.github.io/Justora/terms.html
 
 Support: https://enesseyit22-create.github.io/Justora/support.html
 
-Contact: enesmeryem5@gmail.com
+Contact: fishmapss@gmail.com
 
 There is no account, so there is no account to delete. Lists, timers, moods, and settings stay on the device. Uninstalling the app removes that local data.
 

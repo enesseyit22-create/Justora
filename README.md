@@ -108,7 +108,7 @@ Info.plist strings are localized through Expo’s `locales` field. iOS does not 
 ## Before App Store review
 
 - Host `PRIVACY.md` and put the URL in App Store Connect and `EXPO_PUBLIC_PRIVACY_URL`.
-- Contact: enesmeryem5@gmail.com.
+- Contact: fishmapss@gmail.com.
 - Create the App Store Connect app, screenshots, and the subscription products with the 7-day trial.
 - Paste `APP_REVIEW_NOTES.md` into App Review Information.
 - Walk `REVIEW_CHECKLIST.md`.

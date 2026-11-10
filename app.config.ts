@@ -69,7 +69,7 @@ const config: ExpoConfig = {
   },
   extra: {
     eas: { projectId },
-    contactEmail: process.env.EXPO_PUBLIC_CONTACT_EMAIL || 'enesmeryem5@gmail.com',
+    contactEmail: process.env.EXPO_PUBLIC_CONTACT_EMAIL || 'fishmapss@gmail.com',
     privacyUrl: 'https://enesseyit22-create.github.io/Justora/privacy.html',
     termsUrl: 'https://enesseyit22-create.github.io/Justora/terms.html',
   },
