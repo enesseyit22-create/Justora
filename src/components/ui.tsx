@@ -11,18 +11,20 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 export function Screen({
   children,
   scroll = false,
+  grow = false,
   footer,
   background,
 }: {
   children: ReactNode;
   scroll?: boolean;
+  grow?: boolean;
   footer?: ReactNode;
   background?: ReactNode;
 }) {
   const { palette } = useTheme();
   const body = scroll ? (
     <ScrollView
-      contentContainerStyle={styles.scroll}
+      contentContainerStyle={[styles.scroll, grow && styles.grow]}
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}>
       {children}
@@ -124,8 +126,8 @@ export function PrimaryButton({
       label={title}
       disabled={disabled}
       onPress={onPress}
-      style={[styles.primary, { backgroundColor: palette.accent, shadowColor: palette.shadow }]}>
-      <Txt size={17} weight="extra" color={palette.accentInk} center>
+      style={[styles.primary, { backgroundColor: palette.cta, shadowColor: palette.cta }]}>
+      <Txt size={18} weight="extra" color={palette.ctaInk} center>
         {title}
       </Txt>
     </Press>
@@ -171,9 +173,10 @@ const styles = StyleSheet.create({
   safe: { flex: 1 },
   fill: { flex: 1, paddingHorizontal: 20 },
   scroll: { paddingHorizontal: 20, paddingBottom: 28, gap: 14 },
+  grow: { flexGrow: 1, justifyContent: 'space-evenly' },
   primary: {
-    minHeight: 56,
-    borderRadius: 28,
+    minHeight: 58,
+    borderRadius: 29,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 18,
