@@ -1,6 +1,7 @@
 export type PlanInfo = {
   id: 'monthly' | 'yearly';
   priceString: string;
+  priceAmount: number | null;
   period: 'month' | 'year';
   trialDays: number | null;
 };

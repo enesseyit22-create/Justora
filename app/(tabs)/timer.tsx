@@ -99,13 +99,6 @@ export default function TimerScreen() {
           </Txt>
         </Press>
       </View>
-      {!settings.paywallSeen && settings.ahaStarted ? (
-        <Press onPress={() => router.push('/paywall')}>
-          <Txt color={palette.accent} weight="bold">
-            {t('ahaContinue')}
-          </Txt>
-        </Press>
-      ) : null}
       <TimerDisc
         size={size}
         fraction={timer ? fraction : 1}
@@ -152,10 +145,14 @@ export default function TimerScreen() {
                     justifyContent: 'center',
                     backgroundColor: selected ? palette.accent : palette.card,
                   }}>
-                  <Txt weight="bold" color={selected ? palette.accentInk : palette.ink}>
-                    {preset}
-                    {locked ? ' 🔒' : ''}
-                  </Txt>
+              <Txt weight="bold" color={selected ? palette.accentInk : palette.ink}>
+                {preset}
+              </Txt>
+              {locked ? (
+                <Txt size={11} color={selected ? palette.accentInk : palette.muted}>
+                  {t('themeLocked')}
+                </Txt>
+              ) : null}
                 </Press>
               );
             })}
@@ -166,6 +163,11 @@ export default function TimerScreen() {
               }}
               style={{ minHeight: 52, borderRadius: 18, paddingHorizontal: 16, justifyContent: 'center', backgroundColor: palette.card }}>
               <Txt weight="bold">{t('custom')}</Txt>
+              {!pro ? (
+                <Txt size={11} color={palette.muted}>
+                  {t('themeLocked')}
+                </Txt>
+              ) : null}
             </Press>
           </View>
           {pro && minutes === custom ? (
@@ -212,6 +214,13 @@ export default function TimerScreen() {
           {celebration.xpGained ? <Txt color={palette.sage}>{t('xpGained', { count: celebration.xpGained })}</Txt> : null}
           {celebration.badgeId ? <Txt color={palette.sage}>{t('badgeNew', { name: badgeLabel(celebration.badgeId, t) })}</Txt> : null}
           {celebration.offerBreak ? <PrimaryButton title={t('breakTake')} onPress={() => actions.startBreak()} /> : null}
+          {!pro && !settings.paywallSeen ? (
+            <Press onPress={() => router.push('/paywall')} style={{ minHeight: 44, justifyContent: 'center' }}>
+              <Txt center weight="bold" color={palette.accent}>
+                {t('unlock')}
+              </Txt>
+            </Press>
+          ) : null}
           {celebration.canExtend ? (
             <View style={{ flexDirection: 'row', gap: 8 }}>
               <Press onPress={() => actions.startPreset(10, celebration.label)} style={{ flex: 1, backgroundColor: palette.sageSoft, borderRadius: 16, padding: 12 }}>

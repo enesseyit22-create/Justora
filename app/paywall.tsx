@@ -1,12 +1,23 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 
 import { Companion } from '@/src/components/Companion';
 import { Press, PrimaryButton, Screen, Txt } from '@/src/components/ui';
+import type { PlanInfo } from '@/src/services/purchases';
 import { useI18n } from '@/src/i18n/useI18n';
 import { actions, useApp, useIsPro } from '@/src/store/store';
 import { useTheme } from '@/src/theme/theme';
+
+function savingsPercent(monthly: PlanInfo | null, yearly: PlanInfo | null): number | null {
+  const month = monthly?.priceAmount;
+  const year = yearly?.priceAmount;
+  if (month == null || year == null || month <= 0 || year <= 0) return null;
+  const full = month * 12;
+  if (year >= full) return null;
+  const percent = Math.round((1 - year / full) * 100);
+  return percent >= 5 ? percent : null;
+}
 
 export default function PaywallScreen() {
   const { plans, purchaseState, purchaseMessage } = useApp();
@@ -15,16 +26,29 @@ export default function PaywallScreen() {
   const { palette } = useTheme();
   const [plan, setPlan] = useState<'yearly' | 'monthly'>('yearly');
   const [busy, setBusy] = useState(false);
+  const [restoreNote, setRestoreNote] = useState<'restored' | 'none' | 'failed' | null>(null);
   const selected = plan === 'yearly' ? plans.yearly : plans.monthly;
   const trialDays = selected?.trialDays ?? null;
-  const price = selected?.priceString ?? t('priceUnavailable');
+  const storeReady = purchaseState === 'ready' && Boolean(plans.yearly || plans.monthly);
+  const account = Platform.OS === 'android' ? t('accountGoogle') : t('accountApple');
+  const store = Platform.OS === 'android' ? t('storeGoogle') : t('storeApple');
   const period = plan === 'yearly' ? t('periodYear') : t('periodMonth');
+  const price = selected?.priceString ?? t('priceUnavailable', { store });
   const disclosure =
     trialDays && selected
-      ? t('disclosureTrial', { name: t('appName'), period, price: selected.priceString, days: trialDays })
+      ? t('disclosureTrial', { name: t('appName'), period, price: selected.priceString, days: trialDays, account, store })
       : selected
-        ? t('disclosurePaid', { name: t('appName'), period, price: selected.priceString })
+        ? t('disclosurePaid', { name: t('appName'), period, price: selected.priceString, account, store })
         : t('paySubtitle');
+  const save = savingsPercent(plans.monthly, plans.yearly);
+  const features = [t('feature1'), t('feature2'), t('feature3'), t('feature4'), t('feature5'), t('feature6')];
+  const cta = pro
+    ? t('continue')
+    : trialDays
+      ? t('startTrialDays', { days: trialDays })
+      : plan === 'yearly'
+        ? t('continueYearly')
+        : t('continueMonthly');
 
   const close = () => {
     actions.markPaywallSeen();
@@ -34,59 +58,74 @@ export default function PaywallScreen() {
 
   return (
     <Screen scroll>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-        <Press onPress={close} label={t('close')}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Press onPress={close} label={t('close')} style={{ minWidth: 44, minHeight: 44, justifyContent: 'center' }}>
           <Txt size={22}>×</Txt>
         </Press>
         <Press
           onPress={() => {
-            void actions.restore();
-          }}>
-          <Txt>{t('restore')}</Txt>
+            void actions.restore().then((result) => setRestoreNote(result));
+          }}
+          style={{ minHeight: 44, justifyContent: 'center' }}>
+          <Txt weight="bold" color={palette.accent}>
+            {t('restore')}
+          </Txt>
         </Press>
       </View>
-      <View style={{ alignItems: 'center' }}>
-        <Companion size={140} />
+      <View style={{ alignItems: 'center', gap: 8 }}>
+        <Companion size={96} />
+        <Txt size={32} weight="extra" center>
+          {pro ? t('alreadyPro') : t('payTitle')}
+        </Txt>
+        {!pro ? (
+          <Txt center color={palette.muted}>
+            {t('paySubtitle')}
+          </Txt>
+        ) : null}
       </View>
-      <Txt size={32} weight="extra" center>
-        {pro ? t('alreadyPro') : t('payTitle')}
-      </Txt>
-      <Txt center color={palette.muted}>
-        {t('paySubtitle')}
-      </Txt>
-      {[t('feature1'), t('feature2'), t('feature3'), t('feature4'), t('feature5'), t('feature6')].map((line) => (
-        <Txt key={line}>· {line}</Txt>
-      ))}
+      <View style={{ backgroundColor: palette.card, borderRadius: 22, padding: 16, gap: 10 }}>
+        {features.map((line) => (
+          <View key={line} style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-start' }}>
+            <Txt weight="bold" color={palette.sage}>
+              ✓
+            </Txt>
+            <Txt style={{ flex: 1 }}>{line}</Txt>
+          </View>
+        ))}
+      </View>
       <PlanCard
         title={t('payYearly')}
-        price={plans.yearly?.priceString ?? t('priceUnavailable')}
+        price={plans.yearly?.priceString ?? t('priceUnavailable', { store })}
         period={t('perYear')}
         badge={t('bestValue')}
+        save={save != null ? t('savePercent', { count: save }) : null}
         trial={plans.yearly?.trialDays ? t('trialLine', { days: plans.yearly.trialDays }) : null}
         selected={plan === 'yearly'}
         onPress={() => setPlan('yearly')}
       />
       <PlanCard
         title={t('payMonthly')}
-        price={plans.monthly?.priceString ?? t('priceUnavailable')}
+        price={plans.monthly?.priceString ?? t('priceUnavailable', { store })}
         period={t('perMonth')}
         trial={plans.monthly?.trialDays ? t('trialLine', { days: plans.monthly.trialDays }) : null}
         selected={plan === 'monthly'}
         onPress={() => setPlan('monthly')}
       />
       <Txt size={13} color={palette.muted}>
-        {disclosure}
+        {selected ? disclosure : `${t('payTitle')}. ${price}. ${t('cancelAnytime')}`}
       </Txt>
-      {purchaseState !== 'ready' ? (
+      {storeReady || pro ? null : __DEV__ ? (
         <Txt size={13} color={palette.sage}>
-          {purchaseState === 'unavailable' ? t('devUnavailable') : t('devMissing')}
+          {purchaseState === 'unavailable' ? t('devUnavailable') : purchaseState === 'ready' ? t('devEmpty') : t('devMissing')}
         </Txt>
-      ) : !plans.yearly && !plans.monthly ? (
-        <Txt size={13}>{t('devEmpty')}</Txt>
-      ) : null}
+      ) : (
+        <Txt size={13} color={palette.muted}>
+          {t('purchasesOff')}
+        </Txt>
+      )}
       <PrimaryButton
-        title={pro ? t('continue') : trialDays ? t('startTrial') : t('continuePlan')}
-        disabled={busy || (!pro && purchaseState !== 'ready')}
+        title={cta}
+        disabled={busy || (!pro && !storeReady)}
         onPress={() => {
           if (pro) {
             close();
@@ -100,18 +139,24 @@ export default function PaywallScreen() {
         }}
       />
       {purchaseMessage === 'fail' ? <Txt>{t('purchaseFail')}</Txt> : null}
+      {restoreNote === 'restored' ? <Txt>{t('restored')}</Txt> : null}
+      {restoreNote === 'none' ? <Txt>{t('restoreNone', { account })}</Txt> : null}
+      {restoreNote === 'failed' ? <Txt>{t('restoreFail')}</Txt> : null}
       <Txt center color={palette.muted}>
         {t('cancelAnytime')}
       </Txt>
+      <Txt size={12} color={palette.muted} center>
+        {t('payMedical')}
+      </Txt>
       <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 16 }}>
-        <Press onPress={() => router.push('/terms')}>
+        <Press onPress={() => router.push('/terms')} style={{ minHeight: 44, justifyContent: 'center' }}>
           <Txt color={palette.accent}>{t('terms')}</Txt>
         </Press>
-        <Press onPress={() => router.push('/privacy')}>
+        <Press onPress={() => router.push('/privacy')} style={{ minHeight: 44, justifyContent: 'center' }}>
           <Txt color={palette.accent}>{t('privacy')}</Txt>
         </Press>
       </View>
-      <Press onPress={close}>
+      <Press onPress={close} style={{ minHeight: 44, justifyContent: 'center' }}>
         <Txt center color={palette.muted}>
           {t('later')}
         </Txt>
@@ -125,6 +170,7 @@ function PlanCard({
   price,
   period,
   badge,
+  save,
   trial,
   selected,
   onPress,
@@ -133,6 +179,7 @@ function PlanCard({
   price: string;
   period: string;
   badge?: string;
+  save?: string | null;
   trial: string | null;
   selected: boolean;
   onPress: () => void;
@@ -144,23 +191,34 @@ function PlanCard({
       style={{
         borderRadius: 24,
         padding: 16,
-        backgroundColor: selected ? '#FFF1E8' : palette.card,
-        borderWidth: selected ? 2 : 0,
-        borderColor: palette.accent,
+        backgroundColor: selected ? palette.sageSoft : palette.card,
+        borderWidth: 2,
+        borderColor: selected ? palette.accent : palette.line,
         gap: 4,
       }}>
-      {badge ? (
-        <Txt size={12} weight="bold" color={palette.accentInk} style={{ backgroundColor: palette.accent, alignSelf: 'flex-start', overflow: 'hidden', borderRadius: 10, paddingHorizontal: 8 }}>
-          {badge}
-        </Txt>
-      ) : null}
-      <Txt weight="extra" size={20}>
+      <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+        {badge ? (
+          <Txt size={12} weight="bold" color={palette.accentInk} style={{ backgroundColor: palette.accent, borderRadius: 10, paddingHorizontal: 8, overflow: 'hidden' }}>
+            {badge}
+          </Txt>
+        ) : null}
+        {save ? (
+          <Txt size={12} weight="bold" color={palette.sage} style={{ backgroundColor: palette.card, borderRadius: 10, paddingHorizontal: 8, overflow: 'hidden' }}>
+            {save}
+          </Txt>
+        ) : null}
+      </View>
+      <Txt weight="extra" size={22}>
         {title}
       </Txt>
-      <Txt>
+      <Txt weight="bold" size={18}>
         {price} {period}
       </Txt>
-      {trial ? <Txt color={palette.muted}>{trial}</Txt> : null}
+      {trial ? (
+        <Txt color={palette.sage} weight="bold">
+          {trial}
+        </Txt>
+      ) : null}
     </Press>
   );
 }

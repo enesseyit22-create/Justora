@@ -5,7 +5,6 @@ import { actions } from '@/src/store/store';
 
 function enterApp() {
   actions.markAha();
-  actions.markPaywallSeen();
   router.replace('/(tabs)');
 }
 

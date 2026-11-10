@@ -127,7 +127,7 @@ export default function SettingsScreen() {
           <Txt weight="bold">{t('restore')}</Txt>
         </Press>
         {restoreNote === 'restored' ? <Txt>{t('restored')}</Txt> : null}
-        {restoreNote === 'none' ? <Txt>{t('restoreNone')}</Txt> : null}
+        {restoreNote === 'none' ? <Txt>{t('restoreNone', { account: Platform.OS === 'android' ? t('accountGoogle') : t('accountApple') })}</Txt> : null}
         {restoreNote === 'failed' ? <Txt>{t('restoreFail')}</Txt> : null}
       </Section>
 
