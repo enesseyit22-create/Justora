@@ -1,7 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
-import { Companion } from '@/src/components/Companion';
+import { Companion, type CompanionPose } from '@/src/components/Companion';
 import { Txt } from '@/src/components/ui';
 import type { AccessoryId } from '@/src/domain/types';
 import { useTheme } from '@/src/theme/theme';
@@ -30,6 +30,7 @@ export function TimerDisc({
   breathing,
   accessory,
   breakMode,
+  pose = 'idle',
 }: {
   fraction: number;
   time: string;
@@ -38,6 +39,7 @@ export function TimerDisc({
   breathing?: boolean;
   accessory?: AccessoryId | 'none';
   breakMode?: boolean;
+  pose?: CompanionPose;
 }) {
   const { palette } = useTheme();
   const ring = Math.max(16, size * 0.07);
@@ -78,7 +80,7 @@ export function TimerDisc({
         </View>
       </View>
       <View style={[styles.buddy, { right: size * 0.02, bottom: 0 }]}>
-        <Companion size={size * 0.38} breathing={breathing} accessory={accessory} />
+        <Companion size={pose === 'focus' ? size * 0.46 : size * 0.38} breathing={breathing} accessory={accessory} pose={pose} />
       </View>
     </View>
   );

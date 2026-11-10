@@ -7,6 +7,7 @@ export const PRODUCT_YEARLY = 'focus_pro_yearly';
 export const FREE_PRESET_MIN = 25;
 export const JUST_START_MIN = 2;
 export const FREE_TASK_LIMIT = 3;
+export const FREE_BREAKDOWNS_PER_DAY = 3;
 export const KIND_LIST_NUDGE = 5;
 export const PRESETS = [5, 10, 15, 25, 45] as const;
 

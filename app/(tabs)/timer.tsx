@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Linking, View, useWindowDimensions } from 'react-native';
 
 import { AmbientGlow, GlassCard } from '@/src/components/chrome';
+import { FinishBurst } from '@/src/components/FinishBurst';
 import { TimerDisc } from '@/src/components/Wedge';
 import { Field, Press, PrimaryButton, Screen, Txt } from '@/src/components/ui';
 import { FREE_PRESET_MIN, JUST_START_MIN, PRESETS } from '@/src/config';
@@ -15,7 +16,7 @@ import { router } from 'expo-router';
 
 export default function TimerScreen() {
   const params = useLocalSearchParams<{ aha?: string; just?: string; minutes?: string }>();
-  const { timer, settings, celebration } = useApp();
+  const { timer, settings, celebration, sessions } = useApp();
   const pro = useIsPro();
   const { t } = useI18n();
   const { palette } = useTheme();
@@ -26,6 +27,10 @@ export default function TimerScreen() {
   const [label, setLabel] = useState('');
   const [mixOpen, setMixOpen] = useState(false);
   const [breath, setBreath] = useState(t('inhale'));
+  const [alongside, setAlongside] = useState(false);
+  const [encourage, setEncourage] = useState(0);
+  const [showBurst, setShowBurst] = useState(false);
+  const [feelHidden, setFeelHidden] = useState(false);
   const fired = useRef(false);
   const bucket = useRef(0);
 
@@ -38,6 +43,17 @@ export default function TimerScreen() {
     const id = setInterval(() => setBreath((value) => (value === t('inhale') ? t('exhale') : t('inhale'))), 4000);
     return () => clearInterval(id);
   }, [t]);
+
+  useEffect(() => {
+    if (!alongside) return;
+    const id = setInterval(() => setEncourage((value) => (value + 1) % 3), 22000);
+    return () => clearInterval(id);
+  }, [alongside]);
+
+  useEffect(() => {
+    if (celebration?.code === 'finished') setShowBurst(true);
+    setFeelHidden(false);
+  }, [celebration?.id, celebration?.code]);
 
   useEffect(() => {
     if (fired.current || timer) return;
@@ -98,6 +114,18 @@ export default function TimerScreen() {
             {t('rain')}
           </Txt>
         </Press>
+        <Press
+          onPress={() => setAlongside((value) => !value)}
+          style={{
+            backgroundColor: alongside ? palette.sageSoft : palette.card,
+            borderRadius: 18,
+            paddingHorizontal: 14,
+            paddingVertical: 8,
+          }}>
+          <Txt weight="bold" color={alongside ? palette.sage : palette.ink}>
+            {t('alongside')}
+          </Txt>
+        </Press>
       </View>
       <TimerDisc
         size={size}
@@ -107,8 +135,14 @@ export default function TimerScreen() {
         breathing={running}
         accessory={settings.accessory}
         breakMode={timer?.kind === 'break'}
+        pose={running || alongside ? 'focus' : timer ? 'idle' : 'sleepy'}
       />
       {timer ? <Txt center weight="bold">{timer.label}</Txt> : null}
+      {alongside ? (
+        <Txt center color={palette.muted}>
+          {t(encourage === 0 ? 'encourage1' : encourage === 1 ? 'encourage2' : 'encourage3')}
+        </Txt>
+      ) : null}
       {mixOpen ? (
         <View style={{ gap: 8 }}>
           <Txt>
@@ -207,10 +241,32 @@ export default function TimerScreen() {
       )}
       {celebration ? (
         <GlassCard style={{ gap: 8 }}>
+          {showBurst && celebration.code === 'finished' ? (
+            <FinishBurst haptics={settings.haptics} onDone={() => setShowBurst(false)} />
+          ) : null}
           <Txt weight="extra" size={24}>
             {celebration.code === 'stopped' ? t('stoppedTitle') : t('doneTitle')}
           </Txt>
           <Txt>{celebration.code === 'stopped' ? t('stoppedBody') : t('doneBody')}</Txt>
+          {celebration.code === 'finished' && celebration.sessionId && !feelHidden && !sessions.find((item) => item.id === celebration.sessionId)?.feel ? (
+            <View style={{ gap: 8 }}>
+              <Txt weight="bold">{t('feelTitle')}</Txt>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                {(['rough', 'low', 'ok', 'good', 'great'] as const).map((feel) => (
+                  <Press
+                    key={feel}
+                    label={t(feel === 'rough' ? 'feelRough' : feel === 'low' ? 'feelLow' : feel === 'ok' ? 'feelOk' : feel === 'good' ? 'feelGood' : 'feelGreat')}
+                    onPress={() => actions.setFeel(celebration.sessionId!, feel)}
+                    style={{ padding: 6 }}>
+                    <Txt size={28}>{feel === 'rough' ? '😣' : feel === 'low' ? '😕' : feel === 'ok' ? '😐' : feel === 'good' ? '🙂' : '😄'}</Txt>
+                  </Press>
+                ))}
+              </View>
+              <Press onPress={() => setFeelHidden(true)}>
+                <Txt color={palette.muted}>{t('feelSkip')}</Txt>
+              </Press>
+            </View>
+          ) : null}
           {celebration.xpGained ? <Txt color={palette.sage}>{t('xpGained', { count: celebration.xpGained })}</Txt> : null}
           {celebration.badgeId ? <Txt color={palette.sage}>{t('badgeNew', { name: badgeLabel(celebration.badgeId, t) })}</Txt> : null}
           {celebration.offerBreak ? <PrimaryButton title={t('breakTake')} onPress={() => actions.startBreak()} /> : null}

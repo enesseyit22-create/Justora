@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useContext, useEffect, useSyncExternalStore, type ReactNode } from 'react';
 import { AppState } from 'react-native';
 
-import { FREE_PRESET_MIN, FREE_TASK_LIMIT, JUST_START_MIN } from '@/src/config';
+import { FREE_PRESET_MIN, FREE_TASK_LIMIT, JUST_START_MIN, FREE_BREAKDOWNS_PER_DAY } from '@/src/config';
 import type {
   AccessoryId,
   BadgeId,
@@ -12,6 +12,7 @@ import type {
   RewardEvent,
   RewardsState,
   Session,
+  SessionFeel,
   SessionKind,
   Settings,
   Task,
@@ -43,7 +44,6 @@ import {
   DAILY_GOAL_MIN,
   addXp,
   applyStreakFreezes,
-  awardStreakFreezes,
   backfillRewards,
   canEarnCard,
   completedFocusSessionsOnDay,
@@ -53,11 +53,12 @@ import {
   focusedDaysInWeek,
   focusedMinutesOnDay,
   grantCard,
-  maxFreezes,
   milestoneCards,
   questProgressValue,
+  refillMonthlyFreeze,
   weeklyChestCard,
 } from '@/src/domain/rewards';
+import { stepTemplates } from '@/src/domain/breakdown';
 import { deviceLocale, translate, type Key } from '@/src/i18n';
 import { haptic } from '@/src/services/haptics';
 import { initNotifications, notificationPermission, syncNotifications } from '@/src/services/notifications';
@@ -95,6 +96,11 @@ const defaultSettings = (): Settings => ({
   streakReminder: true,
   accessory: 'none',
   moodDismissedDay: '',
+  breakdownDay: '',
+  breakdownCount: 0,
+  nudgeOn: false,
+  nudgeHour: 16,
+  nudgeMinute: 0,
 });
 
 type State = Persisted & {
@@ -200,7 +206,7 @@ function grantNewCards(rewards: RewardsState, ids: ReturnType<typeof milestoneCa
 
 function syncRewards(events: RewardEvent[] = []): RewardEvent[] {
   const pro = isProNow();
-  let rewards = ensurePeriod(state.rewards);
+  let rewards = refillMonthlyFreeze(ensurePeriod(state.rewards), pro);
   const frozen = applyStreakFreezes({
     sessions: state.sessions,
     tasks: state.tasks,
@@ -209,18 +215,6 @@ function syncRewards(events: RewardEvent[] = []): RewardEvent[] {
   });
   for (const day of frozen.used) events.push({ id: uid(), kind: 'freeze-used', day });
   rewards = { ...rewards, freezeCount: frozen.freezeCount, frozenDays: frozen.frozenDays };
-  const awarded = awardStreakFreezes({
-    streak: frozen.streak,
-    freezeCount: rewards.freezeCount,
-    freezeEarnedTiers: rewards.freezeEarnedTiers,
-    pro,
-  });
-  if (awarded.earned > 0) events.push({ id: uid(), kind: 'freeze-earned', count: awarded.earned });
-  rewards = { ...rewards, freezeCount: awarded.freezeCount, freezeEarnedTiers: awarded.freezeEarnedTiers };
-  if (pro && !rewards.proFreezeGranted && rewards.freezeCount < maxFreezes(true)) {
-    rewards = { ...rewards, freezeCount: rewards.freezeCount + 1, proFreezeGranted: true };
-    events.push({ id: uid(), kind: 'freeze-earned', count: 1 });
-  }
   const today = dayKey();
   const minutes = focusedMinutesOnDay(state.sessions, today);
   if (minutes >= DAILY_GOAL_MIN && rewards.dailyGoalAwardedDay !== today) {
@@ -287,6 +281,12 @@ async function pushSideEffects() {
     planHour: state.settings.planHour,
     planMinute: state.settings.planMinute,
     streakReminder: state.settings.streakReminder && streak > 0 && !focusedToday(state.sessions),
+    nudgeOn: state.settings.nudgeOn,
+    nudgeHour: state.settings.nudgeHour,
+    nudgeMinute: state.settings.nudgeMinute,
+    startedToday:
+      Boolean(state.timer && dayKey(state.timer.startedAt) === dayKey()) ||
+      state.sessions.some((session) => session.kind !== 'break' && dayKey(session.startedAt) === dayKey()),
     copy: {
       endTitle: t('notifEndTitle'),
       endBody: t('notifEndBody'),
@@ -298,6 +298,8 @@ async function pushSideEffects() {
       planBody: t('notifPlanBody'),
       streakTitle: t('notifStreakTitle'),
       streakBody: t('notifStreakBody'),
+      nudgeTitle: t('nudgeNotifTitle'),
+      nudgeBodies: [t('nudge1'), t('nudge2'), t('nudge3'), t('nudge4')],
     },
   });
   const label = timer?.label || 'Justora';
@@ -319,6 +321,7 @@ function archive(reason: 'done' | 'stop', celebrate: boolean) {
   const sessions = [...state.sessions];
   const estimates = [...state.estimates];
   let tasks = state.tasks.map((task) => ({ ...task }));
+  let finishedSessionId: string | undefined;
   if (focused >= 15_000) {
     const session: Session = {
       id: uid(),
@@ -331,9 +334,16 @@ function archive(reason: 'done' | 'stop', celebrate: boolean) {
       startedAt: timer.startedAt,
       endedAt: now,
     };
+    finishedSessionId = session.id;
     sessions.push(session);
   }
-  if (timer.taskId && reason === 'done') {
+  if (timer.stepId && reason === 'done') {
+    tasks = tasks.map((task) =>
+      task.id === timer.taskId
+        ? { ...task, steps: task.steps?.map((step) => (step.id === timer.stepId ? { ...step, done: true } : step)) }
+        : task,
+    );
+  } else if (timer.taskId && reason === 'done') {
     tasks = tasks.map((task) =>
       task.id === timer.taskId ? { ...task, status: 'done', completedAt: now } : task,
     );
@@ -379,7 +389,7 @@ function archive(reason: 'done' | 'stop', celebrate: boolean) {
     state = { ...state, rewards };
     xpGained = state.rewards.xp - before;
   }
-  if (timer.taskId && reason === 'done') {
+  if (timer.taskId && !timer.stepId && reason === 'done') {
     state = { ...state, rewards: grantXp(state.rewards, XP_TASK, rewardEvents) };
     xpGained += XP_TASK;
   }
@@ -393,6 +403,7 @@ function archive(reason: 'done' | 'stop', celebrate: boolean) {
         offerBreak: reason === 'done' && timer.kind !== 'break',
         badgeId,
         xpGained: xpGained > 0 ? xpGained : undefined,
+        sessionId: finishedSessionId,
       }
     : state.celebration;
   state = { ...state, celebration };
@@ -408,6 +419,7 @@ function begin(input: {
   kind: SessionKind;
   taskId?: string;
   estimateMin?: number;
+  stepId?: string;
 }) {
   if (state.timer) archive('stop', false);
   const now = Date.now();
@@ -422,6 +434,7 @@ function begin(input: {
     status: 'running',
     kind: input.kind,
     estimateMin: input.estimateMin,
+    stepId: input.stepId,
     startedAt: now,
     checkpointsFired: { halfway: false, five: false },
   };
@@ -706,6 +719,63 @@ export const actions = {
       kind: 'task',
       taskId: task.id,
       estimateMin: task.estimateMin,
+    });
+  },
+  breakDown(taskId: string) {
+    const task = state.tasks.find((item) => item.id === taskId && item.status === 'open');
+    if (!task) return 'missing' as const;
+    if (task.steps && task.steps.length > 0) return 'ok' as const;
+    const today = dayKey();
+    const fresh = state.settings.breakdownDay !== today;
+    const used = fresh ? 0 : state.settings.breakdownCount;
+    if (!isProNow() && used >= FREE_BREAKDOWNS_PER_DAY) return 'limit' as const;
+    const steps = stepTemplates(task.title, task.estimateMin).map((key) => ({
+      id: uid(),
+      title: t(key),
+      done: false,
+    }));
+    patch({
+      tasks: state.tasks.map((item) => (item.id === taskId ? { ...item, steps } : item)),
+      settings: { ...state.settings, breakdownDay: today, breakdownCount: used + 1 },
+    });
+    return 'ok' as const;
+  },
+  toggleStep(taskId: string, stepId: string) {
+    patch({
+      tasks: state.tasks.map((task) =>
+        task.id === taskId
+          ? { ...task, steps: task.steps?.map((step) => (step.id === stepId ? { ...step, done: !step.done } : step)) }
+          : task,
+      ),
+    });
+  },
+  renameStep(taskId: string, stepId: string, title: string) {
+    const next = title.trim();
+    if (!next) return;
+    patch({
+      tasks: state.tasks.map((task) =>
+        task.id === taskId
+          ? { ...task, steps: task.steps?.map((step) => (step.id === stepId ? { ...step, title: next } : step)) }
+          : task,
+      ),
+    });
+  },
+  startStep(taskId: string) {
+    const task = state.tasks.find((item) => item.id === taskId && item.status === 'open');
+    const step = task?.steps?.find((item) => !item.done);
+    if (!task || !step) return;
+    begin({
+      label: step.title,
+      minutes: JUST_START_MIN,
+      kind: 'task',
+      taskId: task.id,
+      stepId: step.id,
+      estimateMin: JUST_START_MIN,
+    });
+  },
+  setFeel(sessionId: string, feel: SessionFeel) {
+    patch({
+      sessions: state.sessions.map((session) => (session.id === sessionId ? { ...session, feel } : session)),
     });
   },
   startJust() {

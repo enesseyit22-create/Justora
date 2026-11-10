@@ -140,11 +140,18 @@ export function defaultRewards(): RewardsState {
     quests: [],
     weekKey: '',
     weekChestClaimed: false,
+    freezeMonth: '',
   };
 }
 
 export function maxFreezes(pro: boolean): number {
-  return pro ? 3 : 2;
+  return pro ? 2 : 1;
+}
+
+export function refillMonthlyFreeze(rewards: RewardsState, pro: boolean, now = Date.now()): RewardsState {
+  const month = dayKey(now).slice(0, 7);
+  if (rewards.freezeMonth === month) return rewards;
+  return { ...rewards, freezeMonth: month, freezeCount: maxFreezes(pro) };
 }
 
 export function xpRequiredForLevel(level: number): number {

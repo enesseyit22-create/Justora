@@ -86,6 +86,44 @@ export default function SettingsScreen() {
           </Press>
         </View>
         <Row label={t('streakReminder')} value={settings.streakReminder} onChange={(streakReminder) => actions.setSettings({ streakReminder })} />
+        <Row
+          label={t('nudgeTitle')}
+          value={settings.nudgeOn}
+          onChange={(nudgeOn) => {
+            if (!nudgeOn) {
+              actions.setSettings({ nudgeOn: false });
+              return;
+            }
+            void (async () => {
+              const ok = await requestNotificationPermission();
+              setPerm(ok ? 'granted' : 'denied');
+              if (!ok) {
+                actions.setSettings({ nudgeOn: false });
+                void Linking.openSettings();
+                return;
+              }
+              actions.markNotifPrompted();
+              actions.setSettings({ nudgeOn: true });
+            })();
+          }}
+        />
+        <Txt color={palette.muted} size={14}>
+          {t('nudgeHint')}
+        </Txt>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+          <Press onPress={() => actions.setSettings({ nudgeHour: (settings.nudgeHour + 23) % 24 })}>
+            <Txt size={20}>−</Txt>
+          </Press>
+          <Txt weight="bold">
+            {String(settings.nudgeHour).padStart(2, '0')}:{String(settings.nudgeMinute).padStart(2, '0')}
+          </Txt>
+          <Press onPress={() => actions.setSettings({ nudgeHour: (settings.nudgeHour + 1) % 24 })}>
+            <Txt size={20}>+</Txt>
+          </Press>
+          <Press onPress={() => actions.setSettings({ nudgeMinute: (settings.nudgeMinute + 15) % 60 })}>
+            <Txt>{t('nudgeMinute')}</Txt>
+          </Press>
+        </View>
       </Section>
 
       <Section title={t('sectionLook')}>
