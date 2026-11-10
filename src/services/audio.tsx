@@ -21,7 +21,8 @@ export function SoundHost() {
         if (rainOn || brownOn) {
           await setAudioModeAsync({
             playsInSilentMode: true,
-            shouldPlayInBackground: true,
+            // Session-end sound is a scheduled notification, so loops stay in the foreground.
+            shouldPlayInBackground: false,
             interruptionMode: 'mixWithOthers',
           });
         }
