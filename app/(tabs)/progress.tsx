@@ -1,5 +1,6 @@
 import { router } from 'expo-router';
-import { View } from 'react-native';
+import { useRef } from 'react';
+import { Share, View } from 'react-native';
 
 import { CollectibleCard } from '@/src/components/CollectibleCard';
 import { AmbientGlow, Enter, FocusRing, GlassCard } from '@/src/components/chrome';
@@ -14,8 +15,8 @@ import {
   focusedMinutesOnDay,
   maxFreezes,
 } from '@/src/domain/rewards';
-import { ACCESSORY_STREAK, computeStreak, dayKey } from '@/src/domain/time';
-import type { AccessoryId, BadgeId } from '@/src/domain/types';
+import { ACCESSORY_STREAK, computeStreak, dayKey, weekStart } from '@/src/domain/time';
+import type { AccessoryId, BadgeId, Session } from '@/src/domain/types';
 import type { Key } from '@/src/i18n';
 import { useI18n } from '@/src/i18n/useI18n';
 import { haptic } from '@/src/services/haptics';
@@ -115,6 +116,8 @@ export default function ProgressScreen() {
           </GlassCard>
         </View>
       </Enter>
+
+      <WeekShare sessions={sessions} streak={streak} />
 
       <Enter delay={80}>
         <GlassCard style={{ gap: 8 }}>
@@ -276,4 +279,89 @@ export default function ProgressScreen() {
       </Enter>
     </Screen>
   );
+}
+
+function WeekShare({ sessions, streak }: { sessions: Session[]; streak: number }) {
+  const card = useRef(null);
+  const { t, locale } = useI18n();
+  const { palette } = useTheme();
+  const start = weekStart();
+  const end = start + 7 * 86_400_000;
+  const focus = sessions.filter((session) => session.kind !== 'break' && session.endedAt >= start && session.endedAt < end);
+  const minutes = Math.round(focus.reduce((sum, session) => sum + session.focusedMs, 0) / 60_000);
+  const byDay = new Map<string, number>();
+  for (const session of focus) {
+    const key = dayKey(session.endedAt);
+    byDay.set(key, (byDay.get(key) ?? 0) + session.focusedMs);
+  }
+  let bestKey = '';
+  let bestMs = 0;
+  for (const [key, ms] of byDay) {
+    if (ms > bestMs) {
+      bestKey = key;
+      bestMs = ms;
+    }
+  }
+  const bestLabel = bestKey
+    ? new Date(Number(bestKey.slice(0, 4)), Number(bestKey.slice(5, 7)) - 1, Number(bestKey.slice(8, 10))).toLocaleDateString(locale, { weekday: 'long' })
+    : '';
+  const window = bestFocusWindow(sessions);
+  const message = t('shareWeekMessage', { minutes, sessions: focus.length, streak });
+
+  return (
+    <GlassCard style={{ gap: 8 }}>
+      <View ref={card as never} collapsable={false} style={{ gap: 6 }}>
+        <Txt weight="extra" size={20}>
+          {t('weekTitle')}
+        </Txt>
+        <Txt>{t('weekMinutes', { count: minutes })}</Txt>
+        <Txt>{t('weekSessions', { count: focus.length })}</Txt>
+        <Txt>{bestLabel ? t('weekBest', { day: bestLabel }) : t('weekBestEmpty')}</Txt>
+        <Txt>
+          {streak === 0 ? t('streakZero') : t('streakDays', { count: streak })}
+        </Txt>
+        <Txt color={palette.muted}>{window ? t('bestTime', { when: t(window === 'morning' ? 'bestMorning' : window === 'afternoon' ? 'bestAfternoon' : window === 'evening' ? 'bestEvening' : 'bestNight') }) : t('bestTimeEmpty')}</Txt>
+      </View>
+      <Press
+        onPress={() => {
+          void (async () => {
+            try {
+              const { captureRef } = await import('react-native-view-shot');
+              const uri = await captureRef(card as never, { format: 'png', quality: 1 });
+              const Sharing = await import('expo-sharing');
+              if (await Sharing.isAvailableAsync()) {
+                await Sharing.shareAsync(uri, { mimeType: 'image/png' });
+                return;
+              }
+            } catch {
+              // Text share still works when the capture module is missing.
+            }
+            await Share.share({ message });
+          })();
+        }}>
+        <Txt weight="bold" color={palette.accent} center>
+          {t('share')}
+        </Txt>
+      </Press>
+    </GlassCard>
+  );
+}
+
+function bestFocusWindow(sessions: Session[]): 'morning' | 'afternoon' | 'evening' | 'night' | null {
+  const totals = { morning: 0, afternoon: 0, evening: 0, night: 0 };
+  for (const session of sessions) {
+    if (session.kind === 'break' || session.focusedMs < 60_000) continue;
+    const hour = new Date(session.startedAt).getHours();
+    const key = hour < 5 ? 'night' : hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : hour < 21 ? 'evening' : 'night';
+    totals[key] += session.focusedMs;
+  }
+  let best: keyof typeof totals | null = null;
+  let max = 0;
+  for (const key of Object.keys(totals) as (keyof typeof totals)[]) {
+    if (totals[key] > max) {
+      max = totals[key];
+      best = key;
+    }
+  }
+  return best;
 }

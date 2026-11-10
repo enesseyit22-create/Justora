@@ -163,3 +163,7 @@ Justoraは時間を見えるようにします。やわらかい円が、分が�
 Justora Proは、すべての長さ、より長いリスト、履歴、予想の全体、追加のテーマを開きます。サブスクリプションは、App Storeのアカウント設定で解約するまで更新されます。
 
 Justoraはタイマーとリストです。治療せず、診断せず、医療上の助言をしません。
+
+## Play Data safety
+
+Use the same answers on Google Play. Justora does not collect a health record and does not treat or diagnose ADHD. Lists stay on the device. A Pro purchase shares an anonymous app user id and the receipt with Google Play and RevenueCat so the subscription can be checked. There is no account, so there is no account-deletion URL. Age rating: Everyone / 4+. Notification permission is requested only after the user starts a timer or turns on the gentle nudge.

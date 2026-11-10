@@ -25,7 +25,13 @@ export type NotifyPlan = {
     planBody: string;
     streakTitle: string;
     streakBody: string;
+    nudgeTitle: string;
+    nudgeBodies: string[];
   };
+  nudgeOn: boolean;
+  nudgeHour: number;
+  nudgeMinute: number;
+  startedToday: boolean;
 };
 
 let generation = 0;
@@ -130,6 +136,19 @@ export async function syncNotifications(plan: NotifyPlan): Promise<void> {
         content: { title: plan.copy.streakTitle, body: plan.copy.streakBody, sound: false },
         trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour: 20, minute: 0 },
       });
+    }
+
+    if (plan.nudgeOn && plan.copy.nudgeBodies.length > 0) {
+      const now = new Date();
+      for (let day = 0; day < 7; day += 1) {
+        const when = new Date(now);
+        when.setDate(now.getDate() + day);
+        when.setHours(plan.nudgeHour, plan.nudgeMinute, 0, 0);
+        if (when.getTime() < Date.now() + 1500) continue;
+        if (day === 0 && plan.startedToday) continue;
+        const body = plan.copy.nudgeBodies[(when.getDate() + day) % plan.copy.nudgeBodies.length] ?? plan.copy.nudgeBodies[0]!;
+        await schedule(Notifications, when, plan.copy.nudgeTitle, body, false);
+      }
     }
   } catch {
     // Missing permission or Expo Go. The timer still runs from timestamps.

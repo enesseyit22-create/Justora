@@ -4,6 +4,7 @@ export type LocaleSetting = 'system' | AppLocale;
 export type AmbientMix = { rain: number; brown: number };
 export type AccessoryId = 'flower' | 'scarf' | 'glasses' | 'star';
 export type Mood = 'heavy' | 'foggy' | 'steady' | 'bright';
+export type SessionFeel = 'rough' | 'low' | 'ok' | 'good' | 'great';
 export type SessionKind = 'preset' | 'custom' | 'just-start' | 'task' | 'break';
 export type BadgeId =
   | 'first'
@@ -74,6 +75,7 @@ export type RewardsState = {
   quests: DailyQuest[];
   weekKey: string;
   weekChestClaimed: boolean;
+  freezeMonth: string;
 };
 
 export type Settings = {
@@ -97,6 +99,17 @@ export type Settings = {
   streakReminder: boolean;
   accessory: AccessoryId | 'none';
   moodDismissedDay: string;
+  breakdownDay: string;
+  breakdownCount: number;
+  nudgeOn: boolean;
+  nudgeHour: number;
+  nudgeMinute: number;
+};
+
+export type TaskStep = {
+  id: string;
+  title: string;
+  done: boolean;
 };
 
 export type Task = {
@@ -107,6 +120,7 @@ export type Task = {
   createdAt: number;
   completedAt?: number;
   routineId?: string;
+  steps?: TaskStep[];
 };
 
 export type Session = {
@@ -119,6 +133,7 @@ export type Session = {
   completed: boolean;
   startedAt: number;
   endedAt: number;
+  feel?: SessionFeel;
 };
 
 export type Estimate = {
@@ -141,6 +156,7 @@ export type TimerState = {
   status: 'running' | 'paused';
   kind: SessionKind;
   estimateMin?: number;
+  stepId?: string;
   startedAt: number;
   checkpointsFired: { halfway: boolean; five: boolean };
 };
@@ -153,6 +169,7 @@ export type Celebration = {
   offerBreak: boolean;
   badgeId?: BadgeId;
   xpGained?: number;
+  sessionId?: string;
 };
 
 export type Persisted = {

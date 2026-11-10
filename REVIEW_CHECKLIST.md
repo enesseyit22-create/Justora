@@ -52,3 +52,22 @@ Create `focus_pro_monthly` and `focus_pro_yearly` with a 7-day introductory offe
 - `ITSAppUsesNonExemptEncryption` is false.
 - No placeholder screens. Dev-only Pro preview is compiled out of release (`__DEV__`).
 - `EXPO_PUBLIC_ENABLE_APP_INTENTS` stays unset so a non-functional Siri intent is not advertised. URL shortcuts are documented only in the README.
+
+## Play Data safety
+
+Answer the Play Console form from the code, not from marketing copy:
+
+- Data collected by Justora: none. Tasks, timers, moods, streaks, and settings stay in AsyncStorage on the device.
+- Data shared: if Pro is purchased, Google Play and RevenueCat receive an anonymous app user id and the purchase receipt to verify the subscription. No name, email, or task text is sent for that.
+- No ads, no analytics SDK, no crash reporting SDK, no account.
+- Notifications are scheduled on the device with `expo-notifications`. Permission is requested only after the user starts a timer or turns on the gentle nudge.
+- Expo Update, on a release build, may request the project id, platform, and runtime version. Task content is not uploaded.
+- Encryption: the app does not add its own encryption beyond the platform (`usesNonExemptEncryption` is false).
+
+## Age rating
+
+4+ / Everyone. No accounts, no public user content, no unrestricted browser, no real-money chance rewards. Say the app does not treat or diagnose ADHD.
+
+## Android permissions and target SDK
+
+`app.config.ts` does not add extra Android permissions. The notification plugin needs the standard notification permission. Microphone recording is off in the audio plugin. There is no location, camera, or contacts permission. The target SDK is whatever Expo SDK 58 sets. Changing it, or editing `app.config.ts` plugins, needs a new native build. This update does not change that.

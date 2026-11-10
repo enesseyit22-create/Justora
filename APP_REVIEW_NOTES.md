@@ -23,3 +23,9 @@ Widgets and Live Activities appear on an App Store or development build, not in 
 Privacy policy URL: host PRIVACY.md and paste the URL here.
 
 Contact: enesmeryem5@gmail.com
+
+There is no account, so there is no account to delete. Lists, timers, moods, and settings stay on the device. Uninstalling the app removes that local data.
+
+Age rating: 4+ / Everyone. The app does not treat or diagnose ADHD. The streak freeze is a fixed monthly allowance, not a chance purchase.
+
+Notification permission is not requested at launch. It is offered the first time a timer is running, and again only if the user turns on the gentle nudge in Settings.

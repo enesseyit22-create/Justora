@@ -1,9 +1,11 @@
-import { useEffect } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
+import { useEffect, useState } from 'react';
+import { AccessibilityInfo, Image, StyleSheet, View } from 'react-native';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
 
 import type { AccessoryId } from '@/src/domain/types';
 import { useTheme } from '@/src/theme/theme';
+
+export type CompanionPose = 'idle' | 'focus' | 'happy' | 'sleepy';
 
 export function Companion({
   size = 140,
@@ -11,32 +13,71 @@ export function Companion({
   float = false,
   accessory = 'none',
   hero = false,
+  pose = 'idle',
 }: {
   size?: number;
   breathing?: boolean;
   float?: boolean;
   accessory?: AccessoryId | 'none';
   hero?: boolean;
+  pose?: CompanionPose;
 }) {
   const { palette } = useTheme();
+  const [reduceMotion, setReduceMotion] = useState(false);
   const scale = useSharedValue(1);
   const lift = useSharedValue(0);
+  const sway = useSharedValue(0);
   useEffect(() => {
-    if (!breathing) {
-      scale.value = 1;
+    let alive = true;
+    void AccessibilityInfo.isReduceMotionEnabled().then((value) => {
+      if (alive) setReduceMotion(value);
+    });
+    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduceMotion);
+    return () => {
+      alive = false;
+      sub.remove();
+    };
+  }, []);
+  useEffect(() => {
+    if (reduceMotion) {
+      scale.value = withTiming(pose === 'sleepy' ? 0.96 : 1, { duration: 180 });
+      lift.value = withTiming(pose === 'sleepy' ? 4 : 0, { duration: 180 });
+      sway.value = withTiming(pose === 'sleepy' ? -4 : 0, { duration: 180 });
       return;
     }
-    scale.value = withRepeat(withTiming(1.045, { duration: 3600, easing: Easing.inOut(Easing.sin) }), -1, true);
-  }, [breathing, scale]);
-  useEffect(() => {
-    if (!float) {
-      lift.value = 0;
+    if (pose === 'happy') {
+      scale.value = withSequence(withTiming(1.12, { duration: 260 }), withTiming(1, { duration: 280 }));
+      lift.value = withSequence(withTiming(-12, { duration: 260 }), withTiming(0, { duration: 280 }));
+      sway.value = withTiming(0, { duration: 200 });
       return;
     }
-    lift.value = withRepeat(withTiming(-7, { duration: 2800, easing: Easing.inOut(Easing.sin) }), -1, true);
-  }, [float, lift]);
+    if (pose === 'focus') {
+      scale.value = withRepeat(withTiming(1.03, { duration: 2200, easing: Easing.inOut(Easing.sin) }), -1, true);
+      sway.value = withRepeat(withTiming(6, { duration: 2600, easing: Easing.inOut(Easing.sin) }), -1, true);
+      lift.value = withTiming(0, { duration: 200 });
+      return;
+    }
+    if (pose === 'sleepy' || (!breathing && !float && pose === 'idle')) {
+      scale.value = withRepeat(withTiming(0.985, { duration: 4200, easing: Easing.inOut(Easing.sin) }), -1, true);
+      lift.value = withTiming(pose === 'sleepy' ? 6 : 0, { duration: 400 });
+      sway.value = withTiming(pose === 'sleepy' ? -6 : 0, { duration: 400 });
+      return;
+    }
+    if (breathing) {
+      scale.value = withRepeat(withTiming(1.045, { duration: 3600, easing: Easing.inOut(Easing.sin) }), -1, true);
+    } else {
+      scale.value = withTiming(1, { duration: 180 });
+    }
+    if (float) {
+      lift.value = withRepeat(withTiming(-7, { duration: 2800, easing: Easing.inOut(Easing.sin) }), -1, true);
+    } else {
+      lift.value = withTiming(0, { duration: 180 });
+    }
+    sway.value = withTiming(0, { duration: 180 });
+  }, [breathing, float, lift, pose, reduceMotion, scale, sway]);
   const animated = useAnimatedStyle(() => ({
-    transform: [{ translateY: lift.value }, { scale: scale.value }],
+    transform: [{ translateY: lift.value }, { translateX: sway.value }, { rotate: `${sway.value * 0.4}deg` }, { scale: scale.value }],
+    opacity: pose === 'sleepy' ? 0.88 : 1,
   }));
   const shadow = useAnimatedStyle(() => ({
     transform: [{ scaleX: 1 + (-lift.value) * 0.012 }, { scaleY: 1 }],

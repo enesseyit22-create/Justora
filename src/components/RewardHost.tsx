@@ -5,13 +5,15 @@ import Animated, { Easing, useAnimatedStyle, useSharedValue, withDelay, withSequ
 import { CollectibleCard } from '@/src/components/CollectibleCard';
 import { Press, PrimaryButton, Txt } from '@/src/components/ui';
 import { CARD_BY_ID } from '@/src/domain/rewards';
+import { maxFreezes } from '@/src/domain/rewards';
 import { useI18n } from '@/src/i18n/useI18n';
 import { haptic } from '@/src/services/haptics';
-import { actions, useApp } from '@/src/store/store';
+import { actions, useApp, useIsPro } from '@/src/store/store';
 import { useTheme } from '@/src/theme/theme';
 
 export function RewardHost() {
   const { rewardQueue, rewards, settings } = useApp();
+  const pro = useIsPro();
   const current = rewardQueue[0] ?? null;
   const { t } = useI18n();
   const { palette } = useTheme();
@@ -50,10 +52,10 @@ export function RewardHost() {
     body = t('weeklyChestClaim', { count: current.xp });
   } else if (current.kind === 'freeze-earned') {
     title = t('streakFreezeEarned');
-    body = t('streakFreezeHint', { max: 2 });
+    body = t('streakFreezeHint', { max: maxFreezes(pro) });
   } else if (current.kind === 'freeze-used') {
     title = t('streakFreezeUsed');
-    body = t('streakFreezeHint', { max: 2 });
+    body = t('streakFreezeHint', { max: maxFreezes(pro) });
   } else {
     title = t('questComplete', { count: current.xp });
     body = t('quests');

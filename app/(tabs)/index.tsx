@@ -7,14 +7,14 @@ import { Companion } from '@/src/components/Companion';
 import { Guide } from '@/src/components/Guide';
 import { Field, Press, PrimaryButton, Screen, Txt } from '@/src/components/ui';
 import { XpBar } from '@/src/components/XpBar';
-import { dayKey, ROUTINES } from '@/src/domain/time';
+import { dayKey, focusedToday, ROUTINES } from '@/src/domain/time';
 import { useI18n } from '@/src/i18n/useI18n';
 import { haptic } from '@/src/services/haptics';
 import { actions, useApp, useIsPro } from '@/src/store/store';
 import { useTheme } from '@/src/theme/theme';
 
 export default function TodayScreen() {
-  const { tasks, settings, timer, pendingActual, rewards } = useApp();
+  const { tasks, settings, timer, pendingActual, rewards, sessions } = useApp();
   const pro = useIsPro();
   const { t } = useI18n();
   const { palette } = useTheme();
@@ -26,7 +26,10 @@ export default function TodayScreen() {
   const [title, setTitle] = useState('');
   const [guess, setGuess] = useState(15);
   const [actual, setActual] = useState(pendingActual?.estimateMin ?? 15);
+  const [stepDraft, setStepDraft] = useState<{ taskId: string; stepId: string; title: string } | null>(null);
   const today = dayKey();
+  const hour = new Date().getHours();
+  const quiet = !focusedToday(sessions) && (hour >= 22 || hour < 6);
   const open = tasks.filter((task) => task.status === 'open');
   const done = tasks.filter((task) => task.status === 'done' && task.completedAt && dayKey(task.completedAt) === today);
 
@@ -80,7 +83,7 @@ export default function TodayScreen() {
               </Txt>
             </Press>
           </View>
-          <Companion size={companionSize} accessory={settings.accessory} hero breathing float />
+          <Companion size={companionSize} accessory={settings.accessory} hero breathing float pose={quiet ? 'sleepy' : 'idle'} />
           <Txt size={18} weight="bold" center>
             {t('homePurpose')}
           </Txt>
@@ -124,7 +127,7 @@ export default function TodayScreen() {
                   padding: 16,
                   minHeight: 72,
                   flexDirection: 'row',
-                  alignItems: 'center',
+                  alignItems: 'flex-start',
                   gap: 12,
                   shadowColor: palette.shadow,
                   shadowOpacity: 0.1,
@@ -140,30 +143,90 @@ export default function TodayScreen() {
                   }}
                   style={{ width: 28, height: 28, borderRadius: 14, borderWidth: 2, borderColor: palette.line }}
                 />
-                <Press
-                  onPress={() => {
-                    buzz();
-                    actions.startTask(task.id);
-                    router.push('/(tabs)/timer');
-                  }}
-                  onLongPress={() =>
-                    Alert.alert(t('removeTitle'), t('removeBody'), [
-                      { text: t('keep'), style: 'cancel' },
-                      { text: t('remove'), onPress: () => actions.removeTask(task.id) },
-                    ])
-                  }
-                  style={{ flex: 1, minWidth: 0 }}>
-                  <Txt weight="bold">{task.title}</Txt>
-                  {active ? (
-                    <Txt size={12} weight="bold" color={palette.accent}>
-                      {t('inProgress')}
-                    </Txt>
-                  ) : carried ? (
-                    <Txt size={13} color={palette.muted}>
-                      {t('carried')}
-                    </Txt>
-                  ) : null}
-                </Press>
+                <View style={{ flex: 1, minWidth: 0, gap: 6 }}>
+                  <Press
+                    onPress={() => {
+                      buzz();
+                      actions.startTask(task.id);
+                      router.push('/(tabs)/timer');
+                    }}
+                    onLongPress={() =>
+                      Alert.alert(t('removeTitle'), t('removeBody'), [
+                        { text: t('keep'), style: 'cancel' },
+                        { text: t('remove'), onPress: () => actions.removeTask(task.id) },
+                      ])
+                    }>
+                    <Txt weight="bold">{task.title}</Txt>
+                    {active ? (
+                      <Txt size={12} weight="bold" color={palette.accent}>
+                        {t('inProgress')}
+                      </Txt>
+                    ) : carried ? (
+                      <Txt size={13} color={palette.muted}>
+                        {t('carried')}
+                      </Txt>
+                    ) : null}
+                  </Press>
+                  {task.steps && task.steps.length > 0 ? (
+                    <View style={{ gap: 6 }}>
+                      {task.steps.map((step) => (
+                        <View key={step.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                          <Press
+                            label={step.title}
+                            onPress={() => actions.toggleStep(task.id, step.id)}
+                            style={{ width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: step.done ? palette.sage : palette.line, backgroundColor: step.done ? palette.sageSoft : 'transparent' }}
+                          />
+                          {stepDraft?.stepId === step.id ? (
+                            <Field
+                              value={stepDraft.title}
+                              onChangeText={(value) => setStepDraft({ ...stepDraft, title: value })}
+                              placeholder={step.title}
+                            />
+                          ) : (
+                            <Press onPress={() => setStepDraft({ taskId: task.id, stepId: step.id, title: step.title })} style={{ flex: 1 }}>
+                              <Txt size={14} color={step.done ? palette.muted : palette.ink}>
+                                {step.done ? `✓ ${step.title}` : step.title}
+                              </Txt>
+                            </Press>
+                          )}
+                        </View>
+                      ))}
+                      {stepDraft?.taskId === task.id ? (
+                        <Press
+                          onPress={() => {
+                            actions.renameStep(stepDraft.taskId, stepDraft.stepId, stepDraft.title);
+                            setStepDraft(null);
+                          }}>
+                          <Txt size={13} weight="bold" color={palette.accent}>
+                            {t('save')}
+                          </Txt>
+                        </Press>
+                      ) : null}
+                      {task.steps.some((step) => !step.done) ? (
+                        <Press
+                          onPress={() => {
+                            buzz('medium');
+                            actions.startStep(task.id);
+                            router.push('/(tabs)/timer');
+                          }}>
+                          <Txt size={14} weight="bold" color={palette.accent}>
+                            {t('startFirstStep')}
+                          </Txt>
+                        </Press>
+                      ) : null}
+                    </View>
+                  ) : (
+                    <Press
+                      onPress={() => {
+                        const result = actions.breakDown(task.id);
+                        if (result === 'limit') router.push('/paywall');
+                      }}>
+                      <Txt size={13} weight="bold" color={palette.sage}>
+                        {t('splitSteps')}
+                      </Txt>
+                    </Press>
+                  )}
+                </View>
                 <Txt color={palette.muted}>{t('aboutMin', { count: task.estimateMin })}</Txt>
               </View>
             );
