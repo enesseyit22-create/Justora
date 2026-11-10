@@ -33,7 +33,6 @@ export default function PaywallScreen() {
   const account = Platform.OS === 'android' ? t('accountGoogle') : t('accountApple');
   const store = Platform.OS === 'android' ? t('storeGoogle') : t('storeApple');
   const period = plan === 'yearly' ? t('periodYear') : t('periodMonth');
-  const price = selected?.priceString ?? t('priceUnavailable', { store });
   const disclosure =
     trialDays && selected
       ? t('disclosureTrial', { name: t('appName'), period, price: selected.priceString, days: trialDays, account, store })
@@ -94,9 +93,10 @@ export default function PaywallScreen() {
         ))}
       </View>
       <PlanCard
-        title={t('payYearly')}
-        price={plans.yearly?.priceString ?? t('priceUnavailable', { store })}
-        period={t('perYear')}
+        title={plans.yearly?.priceString ? t('payYearly') : t('yearlyPlan')}
+        price={plans.yearly?.priceString ?? null}
+        period={plans.yearly?.priceString ? t('perYear') : null}
+        fallback={t('priceAtCheckout')}
         badge={t('bestValue')}
         save={save != null ? t('savePercent', { count: save }) : null}
         trial={plans.yearly?.trialDays ? t('trialLine', { days: plans.yearly.trialDays }) : null}
@@ -104,15 +104,16 @@ export default function PaywallScreen() {
         onPress={() => setPlan('yearly')}
       />
       <PlanCard
-        title={t('payMonthly')}
-        price={plans.monthly?.priceString ?? t('priceUnavailable', { store })}
-        period={t('perMonth')}
+        title={plans.monthly?.priceString ? t('payMonthly') : t('monthlyPlan')}
+        price={plans.monthly?.priceString ?? null}
+        period={plans.monthly?.priceString ? t('perMonth') : null}
+        fallback={t('priceAtCheckout')}
         trial={plans.monthly?.trialDays ? t('trialLine', { days: plans.monthly.trialDays }) : null}
         selected={plan === 'monthly'}
         onPress={() => setPlan('monthly')}
       />
       <Txt size={13} color={palette.muted}>
-        {selected ? disclosure : `${t('payTitle')}. ${price}. ${t('cancelAnytime')}`}
+        {selected?.priceString ? disclosure : t('priceAtCheckout')}
       </Txt>
       {storeReady || pro ? null : __DEV__ ? (
         <Txt size={13} color={palette.sage}>
@@ -169,6 +170,7 @@ function PlanCard({
   title,
   price,
   period,
+  fallback,
   badge,
   save,
   trial,
@@ -176,8 +178,9 @@ function PlanCard({
   onPress,
 }: {
   title: string;
-  price: string;
-  period: string;
+  price: string | null;
+  period: string | null;
+  fallback: string;
   badge?: string;
   save?: string | null;
   trial: string | null;
@@ -211,9 +214,13 @@ function PlanCard({
       <Txt weight="extra" size={22}>
         {title}
       </Txt>
-      <Txt weight="bold" size={18}>
-        {price} {period}
-      </Txt>
+      {price && period ? (
+        <Txt weight="bold" size={18}>
+          {price} {period}
+        </Txt>
+      ) : (
+        <Txt color={palette.muted}>{fallback}</Txt>
+      )}
       {trial ? (
         <Txt color={palette.sage} weight="bold">
           {trial}

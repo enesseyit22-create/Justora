@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Modal, View } from 'react-native';
+import { Alert, Modal, useWindowDimensions, View } from 'react-native';
 
 import { AmbientGlow, Enter, GlassCard } from '@/src/components/chrome';
 import { Companion } from '@/src/components/Companion';
@@ -18,6 +18,8 @@ export default function TodayScreen() {
   const pro = useIsPro();
   const { t } = useI18n();
   const { palette } = useTheme();
+  const { height } = useWindowDimensions();
+  const companionSize = Math.round(Math.min(248, Math.max(196, height * 0.3)));
   const [adding, setAdding] = useState(false);
   const [listsOpen, setListsOpen] = useState(false);
   const [help, setHelp] = useState(false);
@@ -51,6 +53,8 @@ export default function TodayScreen() {
   return (
     <Screen
       scroll
+      grow
+      bottomInset={false}
       background={<AmbientGlow />}
       footer={
         <View style={{ paddingHorizontal: 16, paddingTop: 6, paddingBottom: 8 }}>
@@ -58,8 +62,8 @@ export default function TodayScreen() {
         </View>
       }>
       <Enter>
-        <View style={{ alignItems: 'center', gap: 4 }}>
-          <View style={{ alignSelf: 'flex-end' }}>
+        <View style={{ alignItems: 'center', gap: 8 }}>
+          <View style={{ alignSelf: 'stretch', alignItems: 'flex-end' }}>
             <Press
               label={t('help')}
               onPress={() => setHelp(true)}
@@ -76,7 +80,7 @@ export default function TodayScreen() {
               </Txt>
             </Press>
           </View>
-          <Companion size={176} accessory={settings.accessory} hero breathing float />
+          <Companion size={companionSize} accessory={settings.accessory} hero breathing float />
           <Txt size={18} weight="bold" center>
             {t('homePurpose')}
           </Txt>

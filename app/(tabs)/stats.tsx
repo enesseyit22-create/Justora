@@ -28,7 +28,7 @@ export default function StatsScreen() {
   const levelKey = `level${companionLevel(streak)}` as const;
 
   return (
-    <Screen scroll background={<AmbientGlow />}>
+    <Screen scroll bottomInset={false} background={<AmbientGlow />}>
       <Enter>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <Txt size={34} weight="extra">

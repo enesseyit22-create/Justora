@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { View } from 'react-native';
+import { useWindowDimensions, View } from 'react-native';
 
 import { CollectibleCard } from '@/src/components/CollectibleCard';
 import { Press, Screen, Txt } from '@/src/components/ui';
@@ -14,10 +14,15 @@ export default function CollectionScreen() {
   const pro = useIsPro();
   const { t } = useI18n();
   const { palette } = useTheme();
+  const { width } = useWindowDimensions();
   const owned = new Set(rewards.earnedCardIds);
   const revealed = new Set(rewards.revealedCardIds);
   const visible = CARDS.filter((card) => !card.proOnly || pro || owned.has(card.id));
   const total = CARDS.filter((card) => canEarnCard(card.id, pro) || owned.has(card.id)).length;
+  const gap = 12;
+  const columns = width >= 900 ? 4 : width >= 640 ? 3 : 2;
+  const contentWidth = Math.max(0, width - 40);
+  const cardWidth = Math.floor((contentWidth - gap * (columns - 1)) / columns);
 
   return (
     <Screen scroll>
@@ -32,20 +37,20 @@ export default function CollectionScreen() {
       <Txt color={palette.muted}>{t('collectionSubtitle')}</Txt>
       <XpBar xp={rewards.xp} />
       <Txt color={palette.muted}>{t('cardsOwned', { owned: owned.size, total })}</Txt>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'space-between' }}>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap, justifyContent: 'flex-start' }}>
         {visible.map((card) => (
           <Press
             key={card.id}
             onPress={() => {
               if (card.proOnly && !owned.has(card.id) && !pro) router.push('/paywall');
             }}
-            style={{ marginBottom: 8 }}>
+            style={{ width: cardWidth }}>
             <CollectibleCard
               id={card.id}
               owned={owned.has(card.id)}
               revealed={revealed.has(card.id)}
               lockedReason={owned.has(card.id) ? undefined : card.proOnly && !pro ? 'pro' : 'locked'}
-              width={150}
+              width={cardWidth}
             />
           </Press>
         ))}

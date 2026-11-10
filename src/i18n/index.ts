@@ -48,10 +48,20 @@ export function deviceLocale(): AppLocale {
 }
 
 export function translate(locale: AppLocale, key: Key, vars?: Record<string, string | number>): string {
-  let text = messages[locale][key] ?? messages.en[key];
+  const chosen = pluralKey(key, vars);
+  let text = messages[locale][chosen] ?? messages.en[chosen] ?? messages[locale][key] ?? messages.en[key];
   if (!vars) return text;
   for (const [name, value] of Object.entries(vars)) {
     text = text.replaceAll(`{{${name}}}`, String(value));
   }
   return text;
+}
+
+function pluralKey(key: Key, vars?: Record<string, string | number>): Key {
+  if (!vars) return key;
+  const raw = vars.count ?? vars.days;
+  const amount = typeof raw === 'number' ? raw : Number(raw);
+  if (amount !== 1) return key;
+  const one = `${key}One` as Key;
+  return Object.prototype.hasOwnProperty.call(messages.en, one) ? one : key;
 }

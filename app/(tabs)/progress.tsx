@@ -65,7 +65,7 @@ export default function ProgressScreen() {
   };
 
   return (
-    <Screen scroll background={<AmbientGlow />}>
+    <Screen scroll bottomInset={false} background={<AmbientGlow />}>
       <Enter>
         <Txt size={34} weight="extra">
           {t('progress')}

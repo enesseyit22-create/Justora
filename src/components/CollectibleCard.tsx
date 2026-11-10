@@ -68,17 +68,14 @@ export function CollectibleCard({
           borderRadius: 22,
           backgroundColor: palette.card,
           borderWidth: 2,
-          borderColor: palette.line,
+          borderColor: palette.muted,
           alignItems: 'center',
-          justifyContent: 'center',
-          padding: 10,
-          gap: 6,
+          justifyContent: 'space-between',
+          padding: 8,
           overflow: 'hidden',
         }}>
-        <View style={{ opacity: 0.72 }}>
-          <CardArt id={id} colors={def.colors} width={Math.round(width * 0.78)} framed={false} />
-        </View>
-        <View style={{ position: 'absolute', left: 8, right: 8, bottom: 8, gap: 2, backgroundColor: palette.card, borderRadius: 12, paddingVertical: 6, paddingHorizontal: 6 }}>
+        <CardArt id={id} colors={def.colors} width={Math.round(width * 0.72)} framed={false} />
+        <View style={{ alignSelf: 'stretch', gap: 2, backgroundColor: palette.bg, borderRadius: 12, paddingVertical: 6, paddingHorizontal: 6 }}>
           <Txt size={12} weight="bold" center>
             {lockedReason === 'pro' ? t('cardProLocked') : t('cardLocked')}
           </Txt>

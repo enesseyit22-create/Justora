@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View, type StyleProp, type ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { font, type Palette } from '@/src/theme/themes';
 import { useTheme } from '@/src/theme/theme';
@@ -11,18 +11,25 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 export function Screen({
   children,
   scroll = false,
+  grow = false,
+  bottomInset = true,
   footer,
   background,
 }: {
   children: ReactNode;
   scroll?: boolean;
+  grow?: boolean;
+  /** Pad the bottom for the system navigation bar. Turn off on tab screens; the tab bar already includes that inset. */
+  bottomInset?: boolean;
   footer?: ReactNode;
   background?: ReactNode;
 }) {
   const { palette } = useTheme();
+  const insets = useSafeAreaInsets();
+  const bottom = bottomInset ? insets.bottom : 0;
   const body = scroll ? (
     <ScrollView
-      contentContainerStyle={styles.scroll}
+      contentContainerStyle={[styles.scroll, grow && styles.grow]}
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}>
       {children}
@@ -31,7 +38,7 @@ export function Screen({
     <View style={styles.fill}>{children}</View>
   );
   return (
-    <SafeAreaView style={[styles.safe, { backgroundColor: palette.bg }]} edges={['top', 'left', 'right']}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: palette.bg, paddingBottom: bottom }]} edges={['top', 'left', 'right']}>
       {background ? <View pointerEvents="none" style={StyleSheet.absoluteFill}>{background}</View> : null}
       {body}
       {footer}
@@ -124,8 +131,8 @@ export function PrimaryButton({
       label={title}
       disabled={disabled}
       onPress={onPress}
-      style={[styles.primary, { backgroundColor: palette.accent, shadowColor: palette.shadow }]}>
-      <Txt size={17} weight="extra" color={palette.accentInk} center>
+      style={[styles.primary, { backgroundColor: palette.cta, shadowColor: palette.cta }]}>
+      <Txt size={18} weight="extra" color={palette.ctaInk} center>
         {title}
       </Txt>
     </Press>
@@ -171,9 +178,10 @@ const styles = StyleSheet.create({
   safe: { flex: 1 },
   fill: { flex: 1, paddingHorizontal: 20 },
   scroll: { paddingHorizontal: 20, paddingBottom: 28, gap: 14 },
+  grow: { flexGrow: 1, justifyContent: 'space-evenly' },
   primary: {
-    minHeight: 56,
-    borderRadius: 28,
+    minHeight: 58,
+    borderRadius: 29,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 18,
