@@ -163,3 +163,11 @@ Justoraは、後回しにしている作業を2分で始めるための集中タ
 Justora Proは、すべての長さ、長めのリスト、履歴、追加のテーマ、仲間の見た目を開きます。サブスクリプションは、App Storeのアカウント設定で解約するまで更新されます。
 
 Justoraはタイマーとリストです。治療せず、診断せず、医療上の助言をしません。
+
+## Hosted legal pages
+
+- Privacy: https://enesseyit22-create.github.io/Justora/privacy.html
+- Terms: https://enesseyit22-create.github.io/Justora/terms.html
+- Support: https://enesseyit22-create.github.io/Justora/support.html
+
+The paywall and Settings open these pages. Paste the privacy URL into App Store Connect and Play Console.

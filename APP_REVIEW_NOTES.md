@@ -20,7 +20,11 @@ Subscriptions, once products are live: Justora Pro, monthly `focus_pro_monthly` 
 
 Widgets and Live Activities appear on an App Store or development build, not in Expo Go. Add the Justora widget from the widget gallery while a timer is running to see the Lock Screen and Dynamic Island.
 
-Privacy policy URL: host PRIVACY.md and paste the URL here.
+Privacy policy: https://enesseyit22-create.github.io/Justora/privacy.html
+
+Terms of Use: https://enesseyit22-create.github.io/Justora/terms.html
+
+Support: https://enesseyit22-create.github.io/Justora/support.html
 
 Contact: enesmeryem5@gmail.com
 

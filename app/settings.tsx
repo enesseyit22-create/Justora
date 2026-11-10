@@ -5,7 +5,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { Linking, Modal, Platform, Pressable, StyleSheet, Switch, View } from 'react-native';
 
 import { Press, Screen, Txt } from '@/src/components/ui';
-import { APP_INTENTS_ENABLED, CONTACT_EMAIL } from '@/src/config';
+import { APP_INTENTS_ENABLED, CONTACT_EMAIL, PRIVACY_URL, TERMS_URL } from '@/src/config';
 import { localeChoices } from '@/src/i18n';
 import { useI18n } from '@/src/i18n/useI18n';
 import { notificationPermission, requestNotificationPermission } from '@/src/services/notifications';
@@ -181,10 +181,10 @@ export default function SettingsScreen() {
       </Section>
 
       <Section title={t('sectionAbout')}>
-        <Press onPress={() => router.push('/privacy')}>
+        <Press onPress={() => void Linking.openURL(PRIVACY_URL)}>
           <Txt>{t('privacy')}</Txt>
         </Press>
-        <Press onPress={() => router.push('/terms')}>
+        <Press onPress={() => void Linking.openURL(TERMS_URL)}>
           <Txt>{t('terms')}</Txt>
         </Press>
         <Txt weight="bold">{t('contact')}</Txt>

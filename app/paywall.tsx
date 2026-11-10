@@ -1,9 +1,10 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Platform, View } from 'react-native';
+import { Platform, Linking, View } from 'react-native';
 
 import { Companion } from '@/src/components/Companion';
 import { Press, PrimaryButton, Screen, Txt } from '@/src/components/ui';
+import { PRIVACY_URL, TERMS_URL } from '@/src/config';
 import type { PlanInfo } from '@/src/services/purchases';
 import { useI18n } from '@/src/i18n/useI18n';
 import { actions, useApp, useIsPro } from '@/src/store/store';
@@ -150,10 +151,10 @@ export default function PaywallScreen() {
         {t('payMedical')}
       </Txt>
       <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 16 }}>
-        <Press onPress={() => router.push('/terms')} style={{ minHeight: 44, justifyContent: 'center' }}>
+        <Press onPress={() => void Linking.openURL(TERMS_URL)} style={{ minHeight: 44, justifyContent: 'center' }}>
           <Txt color={palette.accent}>{t('terms')}</Txt>
         </Press>
-        <Press onPress={() => router.push('/privacy')} style={{ minHeight: 44, justifyContent: 'center' }}>
+        <Press onPress={() => void Linking.openURL(PRIVACY_URL)} style={{ minHeight: 44, justifyContent: 'center' }}>
           <Txt color={palette.accent}>{t('privacy')}</Txt>
         </Press>
       </View>

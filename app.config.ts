@@ -19,7 +19,6 @@ const config: ExpoConfig = {
   ios: {
     supportsTablet: true,
     bundleIdentifier: 'com.fishmaps.justora',
-    buildNumber: '1',
     icon: {
       light: './assets/images/icon-light.png',
       dark: './assets/images/icon-dark.png',
@@ -50,7 +49,6 @@ const config: ExpoConfig = {
   },
   android: {
     package: 'com.fishmaps.justora',
-    versionCode: 1,
     adaptiveIcon: {
       foregroundImage: './assets/images/android-icon-foreground.png',
       backgroundImage: './assets/images/android-icon-background.png',

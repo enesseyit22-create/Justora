@@ -1,5 +1,7 @@
 export const APP_NAME_FALLBACK = 'Justora';
 export const CONTACT_EMAIL = 'enesmeryem5@gmail.com';
+export const PRIVACY_URL = 'https://enesseyit22-create.github.io/Justora/privacy.html';
+export const TERMS_URL = 'https://enesseyit22-create.github.io/Justora/terms.html';
 export const PLACEHOLDER_EAS_PROJECT_ID = '00000000-0000-4000-8000-000000000000';
 export const ENTITLEMENT_ID = 'pro';
 export const PRODUCT_MONTHLY = 'focus_pro_monthly';

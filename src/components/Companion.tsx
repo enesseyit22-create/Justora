@@ -86,7 +86,8 @@ export function Companion({
     transform: [{ scaleX: 1 + (-lift.value) * 0.012 }, { scaleY: 1 }],
     opacity: 0.16 + (7 + lift.value) * 0.012,
   }));
-  const source = hero
+  const framed = hero && backdrop === 'none';
+  const source = framed
     ? require('../../assets/images/companion-hero.png')
     : require('../../assets/images/companion.png');
   return (
@@ -94,7 +95,7 @@ export function Companion({
       <Animated.View
         style={[
           styles.shadow,
-          { backgroundColor: palette.shadow, width: size * (hero ? 0.58 : 0.46), top: size * (hero ? 0.84 : 0.78) },
+          { backgroundColor: palette.shadow, width: size * (framed ? 0.58 : 0.46), top: size * (framed ? 0.84 : 0.78) },
           shadow,
         ]}
       />
@@ -102,10 +103,10 @@ export function Companion({
       <Image
         accessibilityIgnoresInvertColors
         source={source}
-        style={{ width: size, height: size, borderRadius: hero ? size * 0.22 : 0 }}
+        style={{ width: size, height: size, borderRadius: framed ? size * 0.22 : 0 }}
         resizeMode="contain"
       />
-      {accessory !== 'none' ? <WearArt id={accessory} size={size} /> : null}
+      {accessory !== 'none' ? <WearArt id={accessory} size={size} hero={framed} /> : null}
     </Animated.View>
   );
 }
