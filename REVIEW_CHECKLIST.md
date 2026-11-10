@@ -25,7 +25,9 @@ Reviewers should see more than a generic timer, without an account:
 On the paywall, with a configured offering:
 
 - Plan name (Justora Pro), length (1 month or 1 year), and the price string from StoreKit.
-- Free-trial length only when the product’s intro price is free. Otherwise the paywall does not invent a trial.
+- Free-trial length only when the product’s intro price is free. The paywall does not hardcode “7 days.”
+- Yearly is the default plan. A savings percent is shown only when both StoreKit prices are numbers and yearly is at least 5% less than twelve months.
+- On Android the renewal sentence names Google Play, not the App Store.
 - Auto-renewal sentence: charged to the Apple ID, renews unless cancelled at least 24 hours before the period ends, managed in App Store account settings.
 - Terms of Use and Privacy Policy open inside the app.
 - Restore purchases is on the paywall and in Settings.

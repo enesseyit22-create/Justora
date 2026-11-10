@@ -16,6 +16,7 @@ export default function PrivacyScreen() {
       {t('legalPrivacyBody').split('\n\n').map((paragraph) => (
         <Txt key={paragraph.slice(0, 24)}>{paragraph}</Txt>
       ))}
+      <Txt>{t('privacyStores')}</Txt>
     </Screen>
   );
 }

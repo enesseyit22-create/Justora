@@ -62,6 +62,7 @@ function toPlan(id: 'monthly' | 'yearly', pkg?: PurchasesPackage): PlanInfo | nu
   return {
     id,
     priceString: pkg.product.priceString,
+    priceAmount: typeof pkg.product.price === 'number' ? pkg.product.price : null,
     period: id === 'yearly' ? 'year' : 'month',
     trialDays: trialDays(pkg),
   };

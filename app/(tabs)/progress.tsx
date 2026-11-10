@@ -71,6 +71,19 @@ export default function ProgressScreen() {
           {t('progress')}
         </Txt>
       </Enter>
+      {!pro ? (
+        <Press onPress={() => router.push('/paywall')}>
+          <GlassCard style={{ gap: 4 }}>
+            <Txt weight="extra" size={20}>
+              {t('proCardTitle')}
+            </Txt>
+            <Txt color={palette.muted}>{t('proCardBody')}</Txt>
+            <Txt weight="bold" color={palette.accent}>
+              {t('unlock')}
+            </Txt>
+          </GlassCard>
+        </Press>
+      ) : null}
 
       <Enter delay={40}>
         <View style={{ flexDirection: 'row', gap: 10 }}>

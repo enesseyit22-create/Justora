@@ -6,6 +6,5 @@ export default function Index() {
   const { settings } = useApp();
   if (!settings.onboardingDone) return <Redirect href="/onboarding" />;
   if (!settings.ahaStarted) return <Redirect href="/(tabs)/timer?aha=1" />;
-  if (!settings.paywallSeen) return <Redirect href="/paywall" />;
   return <Redirect href="/(tabs)" />;
 }
