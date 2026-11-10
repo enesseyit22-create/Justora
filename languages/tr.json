@@ -1,7 +1,7 @@
 {
   "ios": {
     "CFBundleDisplayName": "Justora",
-    "NSUserNotificationsUsageDescription": "Justora, bir odak oturumu bitince, yarı yolda ve sen açtığın hatırlatmalarda nazikçe haber verir."
+    "NSUserNotificationsUsageDescription": "Justora, odak süren bitince, süre yarıya inince ve açtığın hatırlatmalarda sana haber verir."
   },
   "android": {
     "app_name": "Justora"

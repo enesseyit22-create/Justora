@@ -1,7 +1,7 @@
 {
   "ios": {
     "CFBundleDisplayName": "Justora",
-    "NSUserNotificationsUsageDescription": "Justora sends a gentle notice when a focus session ends, for optional halfway check-ins, and for reminders you turn on."
+    "NSUserNotificationsUsageDescription": "Justora sends a gentle notice when a focus session ends, optionally when you are halfway, and for reminders you turn on."
   },
   "android": {
     "app_name": "Justora"
