@@ -9,12 +9,17 @@
       "distribution": "internal",
       "channel": "development",
       "environment": "development",
-      "ios": { "simulator": true }
+      "ios": {
+        "simulator": true
+      }
     },
     "preview": {
       "distribution": "internal",
       "channel": "preview",
-      "environment": "preview"
+      "environment": "preview",
+      "android": {
+        "buildType": "apk"
+      }
     },
     "production": {
       "channel": "production",

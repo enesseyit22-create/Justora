@@ -20,7 +20,7 @@ npx eas-cli@latest build -p ios --profile development
 npx expo start --dev-client
 ```
 
-`eas init` writes the real EAS project id. Put that id in `EXPO_PUBLIC_EAS_PROJECT_ID` (or let `eas init` update `app.config.ts`) so `updates.url` is `https://u.expo.dev/<project-id>`. The placeholder id is `00000000-0000-4000-8000-000000000000`.
+`eas init` writes the real EAS project id. Put that id in `EXPO_PUBLIC_EAS_PROJECT_ID` (or let `eas init` update `app.config.ts`) so `updates.url` is `https://u.expo.dev/<project-id>`. The placeholder id is `4c2cc818-a80b-4f5f-b88a-2ef69d8ac75b`.
 
 ## Name and bundle id
 

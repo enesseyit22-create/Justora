@@ -1,7 +1,7 @@
 import type { ExpoConfig } from 'expo/config';
 
 const APP_NAME = process.env.EXPO_PUBLIC_APP_NAME ?? 'Justora';
-const PLACEHOLDER_EAS_PROJECT_ID = '00000000-0000-4000-8000-000000000000';
+const PLACEHOLDER_EAS_PROJECT_ID = '4c2cc818-a80b-4f5f-b88a-2ef69d8ac75b';
 const projectId = process.env.EXPO_PUBLIC_EAS_PROJECT_ID || PLACEHOLDER_EAS_PROJECT_ID;
 
 const locales = ['en', 'tr', 'de', 'es', 'fr', 'pt-BR', 'it', 'ja'] as const;
@@ -9,6 +9,7 @@ const locales = ['en', 'tr', 'de', 'es', 'fr', 'pt-BR', 'it', 'ja'] as const;
 const config: ExpoConfig = {
   name: APP_NAME,
   slug: 'justora',
+  owner: 'fishmaps',
   version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
