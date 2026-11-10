@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { View } from 'react-native';
 import 'react-native-reanimated';
 
+import { RewardHost } from '@/src/components/RewardHost';
 import { UpdateBanner } from '@/src/components/UpdateBanner';
 import { SoundHost } from '@/src/services/audio';
 import { UpdateProvider } from '@/src/services/updates';
@@ -43,6 +44,7 @@ function Boot() {
       <UpdateProvider>
         <SoundHost />
         <Nav />
+        <RewardHost />
         <UpdateBanner />
       </UpdateProvider>
     </ThemeBridge>
@@ -63,6 +65,7 @@ function Nav() {
         <Stack.Screen name="onboarding" options={{ gestureEnabled: false }} />
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="paywall" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="collection" options={{ presentation: 'modal' }} />
         <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
         <Stack.Screen name="privacy" options={{ presentation: 'modal' }} />
         <Stack.Screen name="terms" options={{ presentation: 'modal' }} />

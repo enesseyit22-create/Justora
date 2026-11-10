@@ -17,6 +17,65 @@ export type BadgeId =
   | 'break'
   | 'mood';
 
+export type CardRarity = 'common' | 'rare' | 'epic' | 'legendary';
+
+export type CardId =
+  | 'dawnWedge'
+  | 'softRain'
+  | 'focusPebble'
+  | 'openPage'
+  | 'sageLeaf'
+  | 'quietLamp'
+  | 'justSpark'
+  | 'tideShell'
+  | 'groveMoss'
+  | 'duskRibbon'
+  | 'inkDot'
+  | 'weekBloom'
+  | 'streakFlame'
+  | 'companionBloom'
+  | 'goldenWedge'
+  | 'nightOrbit'
+  | 'proAurora'
+  | 'proConstellation'
+  | 'proGilded'
+  | 'proMoonwell';
+
+export type QuestKind = 'session' | 'focusMin' | 'justStart' | 'task' | 'mood' | 'goal';
+
+export type DailyQuest = {
+  kind: QuestKind;
+  target: number;
+  progress: number;
+  claimed: boolean;
+};
+
+export type RewardEvent =
+  | { id: string; kind: 'level-up'; level: number }
+  | { id: string; kind: 'card'; cardId: CardId }
+  | { id: string; kind: 'freeze-earned'; count: number }
+  | { id: string; kind: 'freeze-used'; day: string }
+  | { id: string; kind: 'chest'; xp: number }
+  | { id: string; kind: 'quest'; questKind: QuestKind; xp: number };
+
+export type RewardsState = {
+  xp: number;
+  lastLevelSeen: number;
+  earnedCardIds: CardId[];
+  revealedCardIds: CardId[];
+  freezeCount: number;
+  freezeEarnedTiers: number;
+  frozenDays: string[];
+  proFreezeGranted: boolean;
+  dailyGoalAwardedDay: string;
+  moodXpDay: string;
+  dailyCardDay: string;
+  questsDay: string;
+  quests: DailyQuest[];
+  weekKey: string;
+  weekChestClaimed: boolean;
+};
+
 export type Settings = {
   sound: boolean;
   haptics: boolean;
@@ -93,10 +152,11 @@ export type Celebration = {
   canExtend: boolean;
   offerBreak: boolean;
   badgeId?: BadgeId;
+  xpGained?: number;
 };
 
 export type Persisted = {
-  version: 1;
+  version: 1 | 2;
   settings: Settings;
   tasks: Task[];
   sessions: Session[];
@@ -104,4 +164,5 @@ export type Persisted = {
   moods: MoodEntry[];
   seenBadges: BadgeId[];
   timer: TimerState | null;
+  rewards: RewardsState;
 };

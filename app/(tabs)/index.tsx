@@ -4,13 +4,16 @@ import { Alert, View } from 'react-native';
 
 import { Companion } from '@/src/components/Companion';
 import { Card, Field, Press, PrimaryButton, Screen, Txt } from '@/src/components/ui';
-import { dayKey, ROUTINES } from '@/src/domain/time';
+import { XpBar } from '@/src/components/XpBar';
+import { DAILY_GOAL_MIN, WEEKLY_CHEST_DAYS, WEEKLY_CHEST_XP, XP_DAILY_GOAL, focusedDaysInWeek, focusedMinutesOnDay, maxFreezes } from '@/src/domain/rewards';
+import { computeStreak, dayKey, ROUTINES } from '@/src/domain/time';
 import { useI18n } from '@/src/i18n/useI18n';
+import type { Key } from '@/src/i18n';
 import { actions, useApp, useIsPro } from '@/src/store/store';
 import { useTheme } from '@/src/theme/theme';
 
 export default function TodayScreen() {
-  const { tasks, settings, timer, moods, pendingActual } = useApp();
+  const { tasks, settings, timer, moods, pendingActual, rewards, sessions } = useApp();
   const pro = useIsPro();
   const { t } = useI18n();
   const { palette } = useTheme();
@@ -69,6 +72,74 @@ export default function TodayScreen() {
         <Companion size={92} accessory={settings.accessory} breathing={timer?.status === 'running'} />
       </View>
       <Txt color={palette.muted}>{plenty}</Txt>
+
+      <XpBar xp={rewards.xp} onPress={() => router.push('/collection')} />
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Txt color={palette.muted}>
+          {t('streakTitle')} · {computeStreak(sessions, tasks, { frozenDays: rewards.frozenDays })}
+        </Txt>
+        <Txt color={palette.muted}>
+          {t('streakFreezeCount', { count: rewards.freezeCount })} / {maxFreezes(pro)}
+        </Txt>
+      </View>
+      <Card>
+        <Txt weight="bold">{t('dailyGoal')}</Txt>
+        <Txt color={palette.muted}>
+          {focusedMinutesOnDay(sessions, today) >= DAILY_GOAL_MIN
+            ? t('dailyGoalDone', { count: XP_DAILY_GOAL })
+            : t('dailyGoalProgress', { current: focusedMinutesOnDay(sessions, today), target: DAILY_GOAL_MIN })}
+        </Txt>
+        <View style={{ height: 8, borderRadius: 8, backgroundColor: palette.ring, overflow: 'hidden', marginTop: 6 }}>
+          <View
+            style={{
+              width: `${Math.min(100, Math.round((focusedMinutesOnDay(sessions, today) / DAILY_GOAL_MIN) * 100))}%`,
+              height: '100%',
+              backgroundColor: palette.sage,
+            }}
+          />
+        </View>
+      </Card>
+      <Card>
+        <Txt weight="bold">{t('quests')}</Txt>
+        {rewards.quests.map((quest) => {
+          const labelKey = (
+            quest.kind === 'session'
+              ? 'questSession'
+              : quest.kind === 'focusMin'
+                ? 'questFocusMin'
+                : quest.kind === 'justStart'
+                  ? 'questJust'
+                  : quest.kind === 'task'
+                    ? 'questTask'
+                    : quest.kind === 'mood'
+                      ? 'questMood'
+                      : 'questGoal'
+          ) as Key;
+          return (
+            <View key={quest.kind} style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 8, marginTop: 6 }}>
+              <Txt style={{ flex: 1 }} size={14} color={quest.claimed ? palette.sage : palette.ink}>
+                {quest.claimed ? '✓ ' : ''}
+                {t(labelKey, { count: quest.target })}
+              </Txt>
+              <Txt size={13} color={palette.muted}>
+                {quest.progress}/{quest.target}
+              </Txt>
+            </View>
+          );
+        })}
+      </Card>
+      <Card>
+        <Txt weight="bold">{t('weeklyChest')}</Txt>
+        <Txt color={palette.muted}>{t('weeklyChestBody', { target: WEEKLY_CHEST_DAYS })}</Txt>
+        <Txt size={14}>
+          {t('weeklyChestProgress', { current: focusedDaysInWeek(sessions, tasks), target: WEEKLY_CHEST_DAYS })}
+        </Txt>
+        {rewards.weekChestClaimed ? (
+          <Txt color={palette.sage}>{t('weeklyChestClaimed')}</Txt>
+        ) : focusedDaysInWeek(sessions, tasks) >= WEEKLY_CHEST_DAYS ? (
+          <PrimaryButton title={t('weeklyChestClaim', { count: WEEKLY_CHEST_XP })} onPress={() => actions.claimWeeklyChest()} />
+        ) : null}
+      </Card>
       {!moodToday && settings.moodDismissedDay !== today ? (
         <Card>
           <Txt weight="bold">{t('moodTitle')}</Txt>

@@ -38,21 +38,28 @@ export function activeDays(sessions: Session[], tasks: Task[]): Set<string> {
   return days;
 }
 
-export function computeStreak(sessions: Session[], tasks: Task[], now = Date.now()): number {
+export function shiftDay(day: string, delta: number): string {
+  const [y, m, d] = day.split('-').map(Number);
+  return dayKey(new Date(y, m - 1, d + delta).getTime());
+}
+
+export function computeStreak(
+  sessions: Session[],
+  tasks: Task[],
+  options?: { now?: number; frozenDays?: readonly string[] },
+): number {
+  const now = options?.now ?? Date.now();
   const days = activeDays(sessions, tasks);
+  for (const frozen of options?.frozenDays ?? []) days.add(frozen);
   let cursor = dayKey(now);
   if (!days.has(cursor)) {
-    const yesterday = new Date(now);
-    yesterday.setDate(yesterday.getDate() - 1);
-    cursor = dayKey(yesterday.getTime());
+    cursor = shiftDay(cursor, -1);
     if (!days.has(cursor)) return 0;
   }
   let streak = 0;
   while (days.has(cursor)) {
     streak += 1;
-    const [y, m, d] = cursor.split('-').map(Number);
-    const prev = new Date(y, m - 1, d - 1);
-    cursor = dayKey(prev.getTime());
+    cursor = shiftDay(cursor, -1);
   }
   return streak;
 }

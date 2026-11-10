@@ -1,0 +1,439 @@
+import { activeDays, computeStreak, dayKey, shiftDay, uid, weekStart } from '@/src/domain/time';
+import type {
+  CardId,
+  CardRarity,
+  DailyQuest,
+  QuestKind,
+  RewardEvent,
+  RewardsState,
+  Session,
+  Task,
+  MoodEntry,
+} from '@/src/domain/types';
+
+export const DAILY_GOAL_MIN = 25;
+export const WEEKLY_CHEST_DAYS = 4;
+export const WEEKLY_CHEST_XP = 80;
+export const QUEST_XP = 15;
+export const XP_PER_FOCUS_MIN = 2;
+export const XP_TASK = 15;
+export const XP_JUST_START = 10;
+export const XP_MOOD = 8;
+export const XP_DAILY_GOAL = 25;
+export const XP_DAILY_CARD_REPEAT = 10;
+export const FREEZE_STREAK_STEP = 7;
+
+export type CardMotif = 'wedge' | 'companion' | 'leaf' | 'star' | 'rain' | 'orbit' | 'flame' | 'shell';
+
+export type CardDef = {
+  id: CardId;
+  rarity: CardRarity;
+  proOnly?: boolean;
+  colors: [string, string, string];
+  motif: CardMotif;
+  nameKey: `card${Capitalize<CardId>}`;
+  bodyKey: `card${Capitalize<CardId>}Body`;
+};
+
+export const CARDS: CardDef[] = [
+  { id: 'dawnWedge', rarity: 'common', colors: ['#F6C4AE', '#F0A88A', '#F6F1EA'], motif: 'wedge', nameKey: 'cardDawnWedge', bodyKey: 'cardDawnWedgeBody' },
+  { id: 'softRain', rarity: 'common', colors: ['#C9D8E6', '#8FB3C9', '#F3F7F6'], motif: 'rain', nameKey: 'cardSoftRain', bodyKey: 'cardSoftRainBody' },
+  { id: 'focusPebble', rarity: 'common', colors: ['#D9D0C4', '#A89888', '#F6F1EA'], motif: 'shell', nameKey: 'cardFocusPebble', bodyKey: 'cardFocusPebbleBody' },
+  { id: 'openPage', rarity: 'common', colors: ['#F4E6C8', '#E7C98A', '#FFF8F0'], motif: 'wedge', nameKey: 'cardOpenPage', bodyKey: 'cardOpenPageBody' },
+  { id: 'sageLeaf', rarity: 'common', colors: ['#C9DCC0', '#8FAF86', '#F4F6F1'], motif: 'leaf', nameKey: 'cardSageLeaf', bodyKey: 'cardSageLeafBody' },
+  { id: 'quietLamp', rarity: 'common', colors: ['#F0D9B8', '#E0B07A', '#FFF6EA'], motif: 'star', nameKey: 'cardQuietLamp', bodyKey: 'cardQuietLampBody' },
+  { id: 'justSpark', rarity: 'rare', colors: ['#F6C4AE', '#E7A08A', '#FFE8DC'], motif: 'flame', nameKey: 'cardJustSpark', bodyKey: 'cardJustSparkBody' },
+  { id: 'tideShell', rarity: 'rare', colors: ['#B7DDD6', '#7EB8B0', '#F3F7F6'], motif: 'shell', nameKey: 'cardTideShell', bodyKey: 'cardTideShellBody' },
+  { id: 'groveMoss', rarity: 'rare', colors: ['#C9DCC0', '#6E8F62', '#E6EEE3'], motif: 'leaf', nameKey: 'cardGroveMoss', bodyKey: 'cardGroveMossBody' },
+  { id: 'duskRibbon', rarity: 'rare', colors: ['#D9CBEA', '#B7A4D6', '#F6F3F8'], motif: 'orbit', nameKey: 'cardDuskRibbon', bodyKey: 'cardDuskRibbonBody' },
+  { id: 'inkDot', rarity: 'epic', colors: ['#2C2825', '#E7A08A', '#F7F6F3'], motif: 'star', nameKey: 'cardInkDot', bodyKey: 'cardInkDotBody' },
+  { id: 'weekBloom', rarity: 'epic', colors: ['#F0A88A', '#8FAF86', '#FFF1E8'], motif: 'leaf', nameKey: 'cardWeekBloom', bodyKey: 'cardWeekBloomBody' },
+  { id: 'streakFlame', rarity: 'epic', colors: ['#E7A08A', '#C96B4A', '#FFF1E8'], motif: 'flame', nameKey: 'cardStreakFlame', bodyKey: 'cardStreakFlameBody' },
+  { id: 'companionBloom', rarity: 'epic', colors: ['#F6C4AE', '#6E8F78', '#F6F1EA'], motif: 'companion', nameKey: 'cardCompanionBloom', bodyKey: 'cardCompanionBloomBody' },
+  { id: 'goldenWedge', rarity: 'legendary', colors: ['#F0D27A', '#E7A08A', '#FFF6E0'], motif: 'wedge', nameKey: 'cardGoldenWedge', bodyKey: 'cardGoldenWedgeBody' },
+  { id: 'nightOrbit', rarity: 'legendary', colors: ['#1C1714', '#B7A4D6', '#3A302B'], motif: 'orbit', nameKey: 'cardNightOrbit', bodyKey: 'cardNightOrbitBody' },
+  { id: 'proAurora', rarity: 'epic', proOnly: true, colors: ['#8FCFC6', '#B7A4D6', '#F3F7F6'], motif: 'orbit', nameKey: 'cardProAurora', bodyKey: 'cardProAuroraBody' },
+  { id: 'proConstellation', rarity: 'legendary', proOnly: true, colors: ['#17141C', '#CDBFE6', '#8FCFC6'], motif: 'star', nameKey: 'cardProConstellation', bodyKey: 'cardProConstellationBody' },
+  { id: 'proGilded', rarity: 'legendary', proOnly: true, colors: ['#C9A44A', '#F0D27A', '#2C2825'], motif: 'wedge', nameKey: 'cardProGilded', bodyKey: 'cardProGildedBody' },
+  { id: 'proMoonwell', rarity: 'epic', proOnly: true, colors: ['#7EB8B0', '#D9CBEA', '#121918'], motif: 'shell', nameKey: 'cardProMoonwell', bodyKey: 'cardProMoonwellBody' },
+];
+
+export const CARD_BY_ID: Record<CardId, CardDef> = Object.fromEntries(CARDS.map((card) => [card.id, card])) as Record<
+  CardId,
+  CardDef
+>;
+
+export function defaultRewards(): RewardsState {
+  return {
+    xp: 0,
+    lastLevelSeen: 1,
+    earnedCardIds: [],
+    revealedCardIds: [],
+    freezeCount: 0,
+    freezeEarnedTiers: 0,
+    frozenDays: [],
+    proFreezeGranted: false,
+    dailyGoalAwardedDay: '',
+    moodXpDay: '',
+    dailyCardDay: '',
+    questsDay: '',
+    quests: [],
+    weekKey: '',
+    weekChestClaimed: false,
+  };
+}
+
+export function maxFreezes(pro: boolean): number {
+  return pro ? 3 : 2;
+}
+
+export function xpRequiredForLevel(level: number): number {
+  if (level <= 1) return 0;
+  let total = 0;
+  for (let current = 1; current < level; current += 1) {
+    total += 50 + current * 25;
+  }
+  return total;
+}
+
+export function levelFromXp(xp: number): number {
+  let level = 1;
+  while (level < 99 && xp >= xpRequiredForLevel(level + 1)) level += 1;
+  return level;
+}
+
+export function levelProgress(xp: number): { level: number; current: number; needed: number; ratio: number } {
+  const level = levelFromXp(xp);
+  const start = xpRequiredForLevel(level);
+  const next = xpRequiredForLevel(level + 1);
+  const needed = Math.max(1, next - start);
+  const current = Math.max(0, xp - start);
+  return { level, current, needed, ratio: Math.min(1, current / needed) };
+}
+
+export function hashString(value: string): number {
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = (hash * 33 + value.charCodeAt(i)) >>> 0;
+  }
+  return hash;
+}
+
+const QUEST_POOL: { kind: QuestKind; target: number }[] = [
+  { kind: 'session', target: 1 },
+  { kind: 'focusMin', target: 15 },
+  { kind: 'justStart', target: 1 },
+  { kind: 'task', target: 1 },
+  { kind: 'mood', target: 1 },
+  { kind: 'goal', target: DAILY_GOAL_MIN },
+];
+
+export function questsForDay(day: string): DailyQuest[] {
+  const pool = [...QUEST_POOL];
+  const picked: DailyQuest[] = [];
+  let seed = hashString(`justora-quests-${day}`);
+  while (picked.length < 3 && pool.length > 0) {
+    seed = (seed * 1103515245 + 12345) >>> 0;
+    const index = seed % pool.length;
+    const [item] = pool.splice(index, 1);
+    picked.push({ kind: item.kind, target: item.target, progress: 0, claimed: false });
+  }
+  return picked;
+}
+
+export function focusedMinutesOnDay(sessions: Session[], day: string): number {
+  const ms = sessions
+    .filter((session) => session.kind !== 'break' && dayKey(session.endedAt) === day)
+    .reduce((sum, session) => sum + session.focusedMs, 0);
+  return Math.round(ms / 60_000);
+}
+
+export function completedFocusSessionsOnDay(sessions: Session[], day: string, kind?: Session['kind']): number {
+  return sessions.filter(
+    (session) =>
+      session.kind !== 'break' &&
+      session.focusedMs >= 60_000 &&
+      dayKey(session.endedAt) === day &&
+      (kind ? session.kind === kind : true),
+  ).length;
+}
+
+export function tasksFinishedOnDay(tasks: Task[], day: string): number {
+  return tasks.filter((task) => task.completedAt && dayKey(task.completedAt) === day).length;
+}
+
+export function questProgressValue(
+  kind: QuestKind,
+  input: { sessions: Session[]; tasks: Task[]; moods: MoodEntry[]; day: string },
+): number {
+  const minutes = focusedMinutesOnDay(input.sessions, input.day);
+  switch (kind) {
+    case 'session':
+      return completedFocusSessionsOnDay(input.sessions, input.day);
+    case 'focusMin':
+      return minutes;
+    case 'justStart':
+      return completedFocusSessionsOnDay(input.sessions, input.day, 'just-start');
+    case 'task':
+      return tasksFinishedOnDay(input.tasks, input.day);
+    case 'mood':
+      return input.moods.some((item) => item.day === input.day) ? 1 : 0;
+    case 'goal':
+      return minutes;
+    default:
+      return 0;
+  }
+}
+
+export function weekKeyFor(now = Date.now()): string {
+  return dayKey(weekStart(now));
+}
+
+export function focusedDaysInWeek(sessions: Session[], tasks: Task[], now = Date.now()): number {
+  const start = weekStart(now);
+  const end = start + 7 * 86_400_000;
+  const days = new Set<string>();
+  for (const session of sessions) {
+    if (session.kind === 'break' || session.focusedMs < 60_000) continue;
+    if (session.endedAt >= start && session.endedAt < end) days.add(dayKey(session.endedAt));
+  }
+  for (const task of tasks) {
+    if (task.completedAt && task.completedAt >= start && task.completedAt < end) days.add(dayKey(task.completedAt));
+  }
+  return days.size;
+}
+
+function lastCoveredDay(activity: Set<string>, frozen: readonly string[]): string | null {
+  const all = [...activity, ...frozen];
+  if (all.length === 0) return null;
+  return all.reduce((latest, day) => (day > latest ? day : latest));
+}
+
+export function applyStreakFreezes(input: {
+  sessions: Session[];
+  tasks: Task[];
+  freezeCount: number;
+  frozenDays: readonly string[];
+  now?: number;
+}): { streak: number; freezeCount: number; frozenDays: string[]; used: string[] } {
+  const now = input.now ?? Date.now();
+  const today = dayKey(now);
+  const yesterday = shiftDay(today, -1);
+  const activity = activeDays(input.sessions, input.tasks);
+  const frozen = new Set(input.frozenDays);
+  const last = lastCoveredDay(activity, [...frozen]);
+  const used: string[] = [];
+  let stock = input.freezeCount;
+
+  if (last && last < yesterday) {
+    const gap: string[] = [];
+    let cursor = shiftDay(last, 1);
+    while (cursor <= yesterday) {
+      if (!activity.has(cursor) && !frozen.has(cursor)) gap.push(cursor);
+      cursor = shiftDay(cursor, 1);
+    }
+    if (gap.length > 0 && gap.length <= stock) {
+      for (const day of gap) {
+        frozen.add(day);
+        used.push(day);
+        stock -= 1;
+      }
+    }
+  }
+
+  const streak = computeStreak(input.sessions, input.tasks, { now, frozenDays: [...frozen] });
+  return { streak, freezeCount: stock, frozenDays: [...frozen], used };
+}
+
+export function awardStreakFreezes(input: {
+  streak: number;
+  freezeCount: number;
+  freezeEarnedTiers: number;
+  pro: boolean;
+}): { freezeCount: number; freezeEarnedTiers: number; earned: number } {
+  if (input.streak <= 0) {
+    return { freezeCount: input.freezeCount, freezeEarnedTiers: 0, earned: 0 };
+  }
+  const tiers = Math.floor(input.streak / FREEZE_STREAK_STEP);
+  const room = Math.max(0, maxFreezes(input.pro) - input.freezeCount);
+  const earned = Math.min(room, Math.max(0, tiers - input.freezeEarnedTiers));
+  return {
+    freezeCount: input.freezeCount + earned,
+    freezeEarnedTiers: tiers,
+    earned,
+  };
+}
+
+const LEVEL_CARDS: Record<number, CardId> = {
+  2: 'dawnWedge',
+  3: 'quietLamp',
+  5: 'companionBloom',
+  8: 'goldenWedge',
+  12: 'nightOrbit',
+  15: 'proAurora',
+  20: 'proMoonwell',
+};
+
+const STREAK_CARDS: Record<number, CardId> = {
+  3: 'sageLeaf',
+  7: 'streakFlame',
+  14: 'weekBloom',
+  30: 'proConstellation',
+};
+
+export function milestoneCards(input: {
+  level: number;
+  streak: number;
+  sessions: Session[];
+  moods: MoodEntry[];
+  justStarts: number;
+}): CardId[] {
+  const earned: CardId[] = [];
+  for (const [level, card] of Object.entries(LEVEL_CARDS)) {
+    if (input.level >= Number(level)) earned.push(card);
+  }
+  for (const [streak, card] of Object.entries(STREAK_CARDS)) {
+    if (input.streak >= Number(streak)) earned.push(card);
+  }
+  const real = input.sessions.filter((session) => session.kind !== 'break' && session.focusedMs >= 60_000);
+  if (real.length >= 1) earned.push('focusPebble');
+  if (real.length >= 10) earned.push('openPage');
+  if (real.length >= 25) earned.push('duskRibbon');
+  if (input.justStarts >= 3) earned.push('justSpark');
+  if (input.moods.length >= 5) earned.push('softRain');
+  if (input.level >= 10) earned.push('groveMoss');
+  if (input.streak >= 10) earned.push('tideShell');
+  return earned;
+}
+
+export function canEarnCard(id: CardId, pro: boolean): boolean {
+  const def = CARD_BY_ID[id];
+  return Boolean(def) && (pro || !def.proOnly);
+}
+
+export function dailyCardPick(day: string, owned: readonly CardId[], pro: boolean): CardId | null {
+  const pool = CARDS.filter(
+    (card) =>
+      (card.rarity === 'common' || card.rarity === 'rare') &&
+      !card.proOnly &&
+      !owned.includes(card.id) &&
+      canEarnCard(card.id, pro),
+  );
+  if (pool.length === 0) return null;
+  return pool[hashString(`justora-daily-${day}`) % pool.length]!.id;
+}
+
+export function weeklyChestCard(weekKey: string, owned: readonly CardId[], pro: boolean): CardId | null {
+  const pool = CARDS.filter(
+    (card) =>
+      (card.rarity === 'rare' || card.rarity === 'epic') &&
+      !owned.includes(card.id) &&
+      canEarnCard(card.id, pro),
+  );
+  if (pool.length === 0) {
+    const fallback = CARDS.find((card) => card.id === 'inkDot' && !owned.includes(card.id) && canEarnCard(card.id, pro));
+    return fallback?.id ?? null;
+  }
+  return pool[hashString(`justora-chest-${weekKey}`) % pool.length]!.id;
+}
+
+export function grantCard(
+  rewards: RewardsState,
+  id: CardId,
+  pro: boolean,
+): { rewards: RewardsState; event: RewardEvent | null } {
+  if (rewards.earnedCardIds.includes(id) || !canEarnCard(id, pro)) {
+    return { rewards, event: null };
+  }
+  return {
+    rewards: { ...rewards, earnedCardIds: [...rewards.earnedCardIds, id] },
+    event: { id: uid(), kind: 'card', cardId: id },
+  };
+}
+
+export function addXp(rewards: RewardsState, amount: number): { rewards: RewardsState; levels: number[] } {
+  if (amount <= 0) return { rewards, levels: [] };
+  const before = levelFromXp(rewards.xp);
+  const next = { ...rewards, xp: rewards.xp + amount };
+  const after = levelFromXp(next.xp);
+  const levels: number[] = [];
+  for (let level = before + 1; level <= after; level += 1) levels.push(level);
+  next.lastLevelSeen = after;
+  return { rewards: next, levels };
+}
+
+export function backfillRewards(input: {
+  sessions: Session[];
+  tasks: Task[];
+  moods: MoodEntry[];
+  pro: boolean;
+  now?: number;
+}): RewardsState {
+  const now = input.now ?? Date.now();
+  let rewards = defaultRewards();
+  const real = input.sessions.filter((session) => session.kind !== 'break' && session.focusedMs >= 60_000);
+  const focusMin = Math.round(real.reduce((sum, session) => sum + session.focusedMs, 0) / 60_000);
+  let xp = focusMin * XP_PER_FOCUS_MIN;
+  xp += real.filter((session) => session.kind === 'just-start').length * XP_JUST_START;
+  xp += input.tasks.filter((task) => task.status === 'done').length * XP_TASK;
+  const moodDays = new Set(input.moods.map((item) => item.day));
+  xp += moodDays.size * XP_MOOD;
+  const days = new Set(real.map((session) => dayKey(session.endedAt)));
+  for (const day of days) {
+    if (focusedMinutesOnDay(input.sessions, day) >= DAILY_GOAL_MIN) xp += XP_DAILY_GOAL;
+  }
+  rewards.xp = xp;
+  rewards.lastLevelSeen = levelFromXp(xp);
+  const frozen = applyStreakFreezes({
+    sessions: input.sessions,
+    tasks: input.tasks,
+    freezeCount: 0,
+    frozenDays: [],
+    now,
+  });
+  // Do not spend freezes on migration of a long absence; only keep computed streak.
+  const streak = computeStreak(input.sessions, input.tasks, { now, frozenDays: frozen.used.length ? [] : frozen.frozenDays });
+  const awarded = awardStreakFreezes({
+    streak,
+    freezeCount: 0,
+    freezeEarnedTiers: 0,
+    pro: input.pro,
+  });
+  rewards.freezeCount = awarded.freezeCount;
+  rewards.freezeEarnedTiers = awarded.freezeEarnedTiers;
+  const justStarts = real.filter((session) => session.kind === 'just-start').length;
+  const cards = milestoneCards({
+    level: rewards.lastLevelSeen,
+    streak,
+    sessions: input.sessions,
+    moods: input.moods,
+    justStarts,
+  }).filter((id) => canEarnCard(id, input.pro));
+  rewards.earnedCardIds = [...new Set(cards)];
+  rewards.revealedCardIds = [...rewards.earnedCardIds];
+  const today = dayKey(now);
+  rewards.questsDay = today;
+  rewards.quests = questsForDay(today).map((quest) => {
+    const progress = Math.min(quest.target, questProgressValue(quest.kind, { ...input, day: today }));
+    return { ...quest, progress, claimed: progress >= quest.target };
+  });
+  rewards.weekKey = weekKeyFor(now);
+  rewards.weekChestClaimed = false;
+  if (focusedMinutesOnDay(input.sessions, today) >= DAILY_GOAL_MIN) rewards.dailyGoalAwardedDay = today;
+  if (input.moods.some((item) => item.day === today)) rewards.moodXpDay = today;
+  if (completedFocusSessionsOnDay(input.sessions, today) > 0) rewards.dailyCardDay = today;
+  return rewards;
+}
+
+export function ensurePeriod(rewards: RewardsState, now = Date.now()): RewardsState {
+  const today = dayKey(now);
+  const week = weekKeyFor(now);
+  let next = rewards;
+  if (next.questsDay !== today) {
+    next = { ...next, questsDay: today, quests: questsForDay(today) };
+  }
+  if (next.weekKey !== week) {
+    next = { ...next, weekKey: week, weekChestClaimed: false };
+  }
+  return next;
+}

@@ -208,6 +208,7 @@ export default function TimerScreen() {
             {celebration.code === 'stopped' ? t('stoppedTitle') : t('doneTitle')}
           </Txt>
           <Txt>{celebration.code === 'stopped' ? t('stoppedBody') : t('doneBody')}</Txt>
+          {celebration.xpGained ? <Txt color={palette.sage}>{t('xpGained', { count: celebration.xpGained })}</Txt> : null}
           {celebration.badgeId ? <Txt color={palette.sage}>{t('badgeNew', { name: badgeLabel(celebration.badgeId, t) })}</Txt> : null}
           {celebration.offerBreak ? <PrimaryButton title={t('breakTake')} onPress={() => actions.startBreak()} /> : null}
           {celebration.canExtend ? (

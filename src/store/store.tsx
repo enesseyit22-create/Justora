@@ -9,6 +9,8 @@ import type {
   Celebration,
   Mood,
   Persisted,
+  RewardEvent,
+  RewardsState,
   Session,
   SessionKind,
   Settings,
@@ -21,12 +23,41 @@ import {
   BREAK_KEYS,
   companionLevel,
   computeStreak,
+  dayKey,
   elapsedMs,
   focusedToday,
   ROUTINES,
   uid,
   unlockedBadges,
 } from '@/src/domain/time';
+import {
+  XP_DAILY_CARD_REPEAT,
+  XP_DAILY_GOAL,
+  XP_JUST_START,
+  XP_MOOD,
+  XP_PER_FOCUS_MIN,
+  XP_TASK,
+  QUEST_XP,
+  WEEKLY_CHEST_DAYS,
+  WEEKLY_CHEST_XP,
+  DAILY_GOAL_MIN,
+  addXp,
+  applyStreakFreezes,
+  awardStreakFreezes,
+  backfillRewards,
+  canEarnCard,
+  completedFocusSessionsOnDay,
+  dailyCardPick,
+  defaultRewards,
+  ensurePeriod,
+  focusedDaysInWeek,
+  focusedMinutesOnDay,
+  grantCard,
+  maxFreezes,
+  milestoneCards,
+  questProgressValue,
+  weeklyChestCard,
+} from '@/src/domain/rewards';
 import { deviceLocale, translate, type Key } from '@/src/i18n';
 import { haptic } from '@/src/services/haptics';
 import { initNotifications, notificationPermission, syncNotifications } from '@/src/services/notifications';
@@ -74,10 +105,11 @@ type State = Persisted & {
   celebration: Celebration | null;
   pendingActual: Task | null;
   purchaseMessage: string | null;
+  rewardQueue: RewardEvent[];
 };
 
 let state: State = {
-  version: 1,
+  version: 2,
   settings: defaultSettings(),
   tasks: [],
   sessions: [],
@@ -85,6 +117,7 @@ let state: State = {
   moods: [],
   seenBadges: [],
   timer: null,
+  rewards: defaultRewards(),
   ready: false,
   entitled: false,
   purchaseState: 'missing-key',
@@ -92,6 +125,7 @@ let state: State = {
   celebration: null,
   pendingActual: null,
   purchaseMessage: null,
+  rewardQueue: [],
 };
 
 const listeners = new Set<() => void>();
@@ -128,8 +162,8 @@ function patch(partial: Partial<State>, persist = true) {
 function schedulePersist() {
   if (persistTimer) clearTimeout(persistTimer);
   persistTimer = setTimeout(() => {
-    const { settings, tasks, sessions, estimates, moods, seenBadges, timer } = state;
-    const payload: Persisted = { version: 1, settings, tasks, sessions, estimates, moods, seenBadges, timer };
+    const { settings, tasks, sessions, estimates, moods, seenBadges, timer, rewards } = state;
+    const payload: Persisted = { version: 2, settings, tasks, sessions, estimates, moods, seenBadges, timer, rewards };
     void AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   }, 180);
 }
@@ -138,13 +172,95 @@ function isProNow() {
   return state.entitled || (__DEV__ && state.settings.previewPro);
 }
 
+
+function streakNow(now = Date.now()) {
+  return computeStreak(state.sessions, state.tasks, { now, frozenDays: state.rewards.frozenDays });
+}
+
+function enqueue(events: RewardEvent[]) {
+  if (events.length === 0) return;
+  state = { ...state, rewardQueue: [...state.rewardQueue, ...events] };
+}
+
+function grantXp(rewards: RewardsState, amount: number, events: RewardEvent[]): RewardsState {
+  const added = addXp(rewards, amount);
+  for (const level of added.levels) events.push({ id: uid(), kind: 'level-up', level });
+  return added.rewards;
+}
+
+function grantNewCards(rewards: RewardsState, ids: ReturnType<typeof milestoneCards>, events: RewardEvent[], pro: boolean): RewardsState {
+  let next = rewards;
+  for (const id of ids) {
+    const granted = grantCard(next, id, pro);
+    next = granted.rewards;
+    if (granted.event) events.push(granted.event);
+  }
+  return next;
+}
+
+function syncRewards(events: RewardEvent[] = []): RewardEvent[] {
+  const pro = isProNow();
+  let rewards = ensurePeriod(state.rewards);
+  const frozen = applyStreakFreezes({
+    sessions: state.sessions,
+    tasks: state.tasks,
+    freezeCount: rewards.freezeCount,
+    frozenDays: rewards.frozenDays,
+  });
+  for (const day of frozen.used) events.push({ id: uid(), kind: 'freeze-used', day });
+  rewards = { ...rewards, freezeCount: frozen.freezeCount, frozenDays: frozen.frozenDays };
+  const awarded = awardStreakFreezes({
+    streak: frozen.streak,
+    freezeCount: rewards.freezeCount,
+    freezeEarnedTiers: rewards.freezeEarnedTiers,
+    pro,
+  });
+  if (awarded.earned > 0) events.push({ id: uid(), kind: 'freeze-earned', count: awarded.earned });
+  rewards = { ...rewards, freezeCount: awarded.freezeCount, freezeEarnedTiers: awarded.freezeEarnedTiers };
+  if (pro && !rewards.proFreezeGranted && rewards.freezeCount < maxFreezes(true)) {
+    rewards = { ...rewards, freezeCount: rewards.freezeCount + 1, proFreezeGranted: true };
+    events.push({ id: uid(), kind: 'freeze-earned', count: 1 });
+  }
+  const today = dayKey();
+  const minutes = focusedMinutesOnDay(state.sessions, today);
+  if (minutes >= DAILY_GOAL_MIN && rewards.dailyGoalAwardedDay !== today) {
+    rewards = grantXp({ ...rewards, dailyGoalAwardedDay: today }, XP_DAILY_GOAL, events);
+  }
+  const justStarts = state.sessions.filter((session) => session.kind === 'just-start' && session.focusedMs >= 60_000).length;
+  rewards = grantNewCards(
+    rewards,
+    milestoneCards({
+      level: Math.max(rewards.lastLevelSeen, 1),
+      streak: frozen.streak,
+      sessions: state.sessions,
+      moods: state.moods,
+      justStarts,
+    }),
+    events,
+    pro,
+  );
+  const quests = rewards.quests.map((quest) => {
+    const progress = Math.min(quest.target, questProgressValue(quest.kind, { sessions: state.sessions, tasks: state.tasks, moods: state.moods, day: today }));
+    if (progress >= quest.target && !quest.claimed) {
+      rewards = grantXp(rewards, QUEST_XP, events);
+      events.push({ id: uid(), kind: 'quest', questKind: quest.kind, xp: QUEST_XP });
+      return { ...quest, progress, claimed: true };
+    }
+    return { ...quest, progress };
+  });
+  rewards = { ...rewards, quests };
+  state = { ...state, rewards };
+  enqueue(events);
+  return events;
+}
+
 function freshBadge(): BadgeId | undefined {
   const current = unlockedBadges({
     sessions: state.sessions,
     estimates: state.estimates,
     moods: state.moods,
     tasks: state.tasks,
-    streak: computeStreak(state.sessions, state.tasks),
+    streak: streakNow(),
   });
   const fresh = current.find((id) => !state.seenBadges.includes(id));
   state = { ...state, seenBadges: current };
@@ -153,7 +269,7 @@ function freshBadge(): BadgeId | undefined {
 
 async function pushSideEffects() {
   const granted = (await notificationPermission()) === 'granted';
-  const streak = computeStreak(state.sessions, state.tasks);
+  const streak = streakNow();
   const timer = state.timer;
   await syncNotifications({
     granted,
@@ -239,6 +355,35 @@ function archive(reason: 'done' | 'stop', celebrate: boolean) {
     timer: null,
   };
   const badgeId = freshBadge();
+  let xpGained = 0;
+  const rewardEvents: RewardEvent[] = [];
+  if (focused >= 60_000 && timer.kind !== 'break') {
+    const minutes = Math.max(1, Math.round(focused / 60_000));
+    const before = state.rewards.xp;
+    let rewards = grantXp(state.rewards, minutes * XP_PER_FOCUS_MIN, rewardEvents);
+    if (timer.kind === 'just-start' && reason === 'done') {
+      rewards = grantXp(rewards, XP_JUST_START, rewardEvents);
+    }
+    const today = dayKey();
+    if (completedFocusSessionsOnDay(sessions, today) === 1 && rewards.dailyCardDay !== today) {
+      const pick = dailyCardPick(today, rewards.earnedCardIds, isProNow());
+      if (pick) {
+        const granted = grantCard(rewards, pick, isProNow());
+        rewards = granted.rewards;
+        if (granted.event) rewardEvents.push(granted.event);
+      } else {
+        rewards = grantXp(rewards, XP_DAILY_CARD_REPEAT, rewardEvents);
+      }
+      rewards = { ...rewards, dailyCardDay: today };
+    }
+    state = { ...state, rewards };
+    xpGained = state.rewards.xp - before;
+  }
+  if (timer.taskId && reason === 'done') {
+    state = { ...state, rewards: grantXp(state.rewards, XP_TASK, rewardEvents) };
+    xpGained += XP_TASK;
+  }
+  syncRewards(rewardEvents);
   const celebration: Celebration | null = celebrate
     ? {
         id: uid(),
@@ -247,6 +392,7 @@ function archive(reason: 'done' | 'stop', celebrate: boolean) {
         canExtend: reason === 'done' && timer.kind === 'just-start',
         offerBreak: reason === 'done' && timer.kind !== 'break',
         badgeId,
+        xpGained: xpGained > 0 ? xpGained : undefined,
       }
     : state.celebration;
   state = { ...state, celebration };
@@ -285,22 +431,47 @@ function begin(input: {
   void pushSideEffects();
 }
 
+function sanitizeRewards(raw: unknown, sessions: Session[], tasks: Task[], moods: import('@/src/domain/types').MoodEntry[], previewPro: boolean): RewardsState {
+  if (!raw || typeof raw !== 'object') {
+    return backfillRewards({ sessions, tasks, moods, pro: previewPro });
+  }
+  const data = raw as Partial<RewardsState>;
+  const base = defaultRewards();
+  return {
+    ...base,
+    ...data,
+    earnedCardIds: Array.isArray(data.earnedCardIds) ? data.earnedCardIds : [],
+    revealedCardIds: Array.isArray(data.revealedCardIds) ? data.revealedCardIds : [],
+    frozenDays: Array.isArray(data.frozenDays) ? data.frozenDays : [],
+    quests: Array.isArray(data.quests) ? data.quests : [],
+    xp: typeof data.xp === 'number' ? Math.max(0, data.xp) : 0,
+    freezeCount: typeof data.freezeCount === 'number' ? Math.max(0, data.freezeCount) : 0,
+  };
+}
+
 function sanitize(raw: unknown): Persisted {
   const base = defaultSettings();
   if (!raw || typeof raw !== 'object') {
-    return { version: 1, settings: base, tasks: [], sessions: [], estimates: [], moods: [], seenBadges: [], timer: null };
+    return { version: 2, settings: base, tasks: [], sessions: [], estimates: [], moods: [], seenBadges: [], timer: null, rewards: defaultRewards() };
   }
   const data = raw as Partial<Persisted>;
   const settings = { ...base, ...(data.settings ?? {}) };
+  const tasks = Array.isArray(data.tasks) ? data.tasks : [];
+  const sessions = Array.isArray(data.sessions) ? data.sessions : [];
+  const estimates = Array.isArray(data.estimates) ? data.estimates : [];
+  const moods = Array.isArray(data.moods) ? data.moods : [];
   const persisted: Persisted = {
-    version: 1,
+    version: 2,
     settings,
-    tasks: Array.isArray(data.tasks) ? data.tasks : [],
-    sessions: Array.isArray(data.sessions) ? data.sessions : [],
-    estimates: Array.isArray(data.estimates) ? data.estimates : [],
-    moods: Array.isArray(data.moods) ? data.moods : [],
+    tasks,
+    sessions,
+    estimates,
+    moods,
     seenBadges: Array.isArray(data.seenBadges) ? data.seenBadges : [],
     timer: data.timer ?? null,
+    rewards: data.version === 2 && data.rewards
+      ? sanitizeRewards(data.rewards, sessions, tasks, moods, Boolean(settings.previewPro))
+      : backfillRewards({ sessions, tasks, moods, pro: Boolean(settings.previewPro) }),
   };
   if (!Array.isArray(data.seenBadges)) {
     persisted.seenBadges = unlockedBadges({
@@ -308,7 +479,7 @@ function sanitize(raw: unknown): Persisted {
       estimates: persisted.estimates,
       moods: persisted.moods,
       tasks: persisted.tasks,
-      streak: computeStreak(persisted.sessions, persisted.tasks),
+      streak: computeStreak(persisted.sessions, persisted.tasks, { frozenDays: persisted.rewards.frozenDays }),
     });
   }
   return persisted;
@@ -319,11 +490,13 @@ export const actions = {
     try {
       const raw = await AsyncStorage.getItem(STORAGE_KEY);
       const persisted = sanitize(raw ? JSON.parse(raw) : null);
-      state = { ...state, ...persisted, ready: true };
+      state = { ...state, ...persisted, ready: true, rewardQueue: [] };
+      syncRewards();
       if (state.timer?.status === 'running' && state.timer.endsAt && state.timer.endsAt <= Date.now()) {
         archive('done', true);
       } else {
         emit();
+        schedulePersist();
         void pushSideEffects();
       }
     } catch {
@@ -334,7 +507,11 @@ export const actions = {
     if (purchaseState === 'ready') {
       const plans = await loadPlans();
       patch({ plans }, false);
-      subscribePro((entitled) => patch({ entitled }, false));
+      subscribePro((entitled) => {
+        patch({ entitled }, false);
+        syncRewards();
+        schedulePersist();
+      });
     }
     void initNotifications();
   },
@@ -365,6 +542,8 @@ export const actions = {
     }
   },
   foreground() {
+    syncRewards();
+    schedulePersist();
     const timer = state.timer;
     if (!timer || timer.status !== 'running' || !timer.endsAt) {
       void pushSideEffects();
@@ -389,7 +568,7 @@ export const actions = {
     if (partial.themeId && partial.themeId !== 'justora' && !isProNow()) return 'locked' as const;
     if (partial.accessory && partial.accessory !== 'none') {
       const need = ACCESSORY_STREAK[partial.accessory];
-      if (computeStreak(state.sessions, state.tasks) < need) return 'locked' as const;
+      if (streakNow() < need) return 'locked' as const;
     }
     patch({ settings });
     void pushSideEffects();
@@ -460,7 +639,11 @@ export const actions = {
     const tasks = state.tasks.map((item) =>
       item.id === id ? { ...item, status: 'done' as const, completedAt: Date.now() } : item,
     );
-    patch({ tasks, pendingActual: { ...task, status: 'done', completedAt: Date.now() } });
+    const events: RewardEvent[] = [];
+    state = { ...state, tasks, pendingActual: { ...task, status: 'done', completedAt: Date.now() }, rewards: grantXp(state.rewards, XP_TASK, events) };
+    syncRewards(events);
+    emit();
+    schedulePersist();
     if (state.settings.haptics) void haptic('success');
   },
   recordActual(minutes: number) {
@@ -485,12 +668,17 @@ export const actions = {
     patch({ pendingActual: null });
   },
   setMood(mood: Mood) {
-    const day = new Date();
-    const key = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
+    const key = dayKey();
     const moods = [...state.moods.filter((item) => item.day !== key), { day: key, mood }];
-    state = { ...state, moods };
+    const events: RewardEvent[] = [];
+    let rewards = state.rewards;
+    if (rewards.moodXpDay !== key) {
+      rewards = grantXp({ ...rewards, moodXpDay: key }, XP_MOOD, events);
+    }
+    state = { ...state, moods, rewards };
     const badgeId = freshBadge();
-    patch({ moods, seenBadges: state.seenBadges, celebration: badgeId ? { id: uid(), code: 'finished', label: '', canExtend: false, offerBreak: false, badgeId } : state.celebration });
+    syncRewards(events);
+    patch({ moods, seenBadges: state.seenBadges, rewards: state.rewards, celebration: badgeId ? { id: uid(), code: 'finished', label: '', canExtend: false, offerBreak: false, badgeId } : state.celebration });
   },
   dismissMood(day: string) {
     patch({ settings: { ...state.settings, moodDismissedDay: day } });
@@ -548,6 +736,36 @@ export const actions = {
   },
   dismissCelebration() {
     patch({ celebration: null });
+  },
+  dismissReward() {
+    const queue = state.rewardQueue.slice(1);
+    patch({ rewardQueue: queue }, false);
+  },
+  revealCard(id: Parameters<typeof grantCard>[1]) {
+    if (state.rewards.revealedCardIds.includes(id)) return;
+    patch({ rewards: { ...state.rewards, revealedCardIds: [...state.rewards.revealedCardIds, id] } });
+  },
+  claimWeeklyChest() {
+    const rewards = ensurePeriod(state.rewards);
+    const days = focusedDaysInWeek(state.sessions, state.tasks);
+    if (rewards.weekChestClaimed || days < WEEKLY_CHEST_DAYS) {
+      patch({ rewards });
+      return;
+    }
+    const events: RewardEvent[] = [];
+    let next = grantXp({ ...rewards, weekChestClaimed: true }, WEEKLY_CHEST_XP, events);
+    const card = weeklyChestCard(next.weekKey, next.earnedCardIds, isProNow());
+    if (card) {
+      const granted = grantCard(next, card, isProNow());
+      next = granted.rewards;
+      if (granted.event) events.push(granted.event);
+    }
+    events.unshift({ id: uid(), kind: 'chest', xp: WEEKLY_CHEST_XP });
+    state = { ...state, rewards: next };
+    enqueue(events);
+    emit();
+    schedulePersist();
+    if (state.settings.haptics) void haptic('success');
   },
   async purchase(id: 'monthly' | 'yearly') {
     const outcome = await buy(id);

@@ -54,7 +54,7 @@ export default function PaywallScreen() {
       <Txt center color={palette.muted}>
         {t('paySubtitle')}
       </Txt>
-      {[t('feature1'), t('feature2'), t('feature3'), t('feature4')].map((line) => (
+      {[t('feature1'), t('feature2'), t('feature3'), t('feature4'), t('feature5'), t('feature6')].map((line) => (
         <Txt key={line}>· {line}</Txt>
       ))}
       <PlanCard
