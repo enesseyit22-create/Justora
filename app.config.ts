@@ -56,6 +56,16 @@ const config: ExpoConfig = {
       backgroundColor: '#FFE0C4',
     },
     predictiveBackGestureEnabled: false,
+    // Stripped at manifest merge. Session-end sound is a scheduled notification.
+    // Rain and brown noise play only while the app is open.
+    blockedPermissions: [
+      'android.permission.FOREGROUND_SERVICE',
+      'android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK',
+      'android.permission.SYSTEM_ALERT_WINDOW',
+      'android.permission.READ_EXTERNAL_STORAGE',
+      'android.permission.WRITE_EXTERNAL_STORAGE',
+      'com.google.android.gms.permission.AD_ID',
+    ],
   },
   web: {
     bundler: 'metro',
@@ -103,7 +113,7 @@ const config: ExpoConfig = {
         microphonePermission: false,
         recordAudioAndroid: false,
         enableBackgroundRecording: false,
-        enableBackgroundPlayback: true,
+        enableBackgroundPlayback: false,
       },
     ],
     [
