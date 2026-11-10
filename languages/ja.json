@@ -1,0 +1,9 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "Justora",
+    "NSUserNotificationsUsageDescription": "Justoraは、集中の終了時、半分のとき、そして自分でオンにしたリマインダーを静かに知らせます。"
+  },
+  "android": {
+    "app_name": "Justora"
+  }
+}

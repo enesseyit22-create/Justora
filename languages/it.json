@@ -1,0 +1,9 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "Justora",
+    "NSUserNotificationsUsageDescription": "Justora avvisa con dolcezza quando finisce una sessione, a metà, e per i promemoria che attivi."
+  },
+  "android": {
+    "app_name": "Justora"
+  }
+}

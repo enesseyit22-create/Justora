@@ -1,0 +1,9 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "Justora",
+    "NSUserNotificationsUsageDescription": "Justora avisa con suavidad cuando termina una sesión, a mitad de camino, y con los recordatorios que tú activas."
+  },
+  "android": {
+    "app_name": "Justora"
+  }
+}

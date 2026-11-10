@@ -1,0 +1,9 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "Justora",
+    "NSUserNotificationsUsageDescription": "Justora weist leise hin, wenn eine Fokuszeit endet, auf halbem Weg, und an Erinnerungen, die du einschaltest."
+  },
+  "android": {
+    "app_name": "Justora"
+  }
+}

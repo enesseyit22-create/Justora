@@ -1,0 +1,9 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "Justora",
+    "NSUserNotificationsUsageDescription": "Justora prévient discrètement à la fin d’une session, à mi-parcours, et pour les rappels que tu actives."
+  },
+  "android": {
+    "app_name": "Justora"
+  }
+}
